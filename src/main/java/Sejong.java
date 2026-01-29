@@ -50,7 +50,53 @@ public class Sejong {
                     continue;
                 }
 
-                addTask(tasks, input);
+                if (input.startsWith("todo ")) {
+                    String description = input.substring(5).trim();
+                    if (description.isEmpty()) {
+                        printInvalidCommand();
+                        continue;
+                    }
+                    addTodo(tasks, description);
+                    continue;
+                }
+
+                if (input.startsWith("deadline ")) {
+                    String remainder = input.substring(9).trim();
+                    int byIndex = remainder.indexOf("/by");
+                    if (byIndex == -1 || byIndex == 0) {
+                        printInvalidCommand();
+                        continue;
+                    }
+                    String description = remainder.substring(0, byIndex).trim();
+                    String by = remainder.substring(byIndex + 3).trim();
+                    if (description.isEmpty() || by.isEmpty()) {
+                        printInvalidCommand();
+                        continue;
+                    }
+                    addDeadline(tasks, description, by);
+                    continue;
+                }
+
+                if (input.startsWith("event ")) {
+                    String remainder = input.substring(6).trim();
+                    int fromIndex = remainder.indexOf("/from");
+                    int toIndex = remainder.indexOf("/to");
+                    if (fromIndex == -1 || toIndex == -1 || fromIndex == 0 || toIndex <= fromIndex) {
+                        printInvalidCommand();
+                        continue;
+                    }
+                    String description = remainder.substring(0, fromIndex).trim();
+                    String from = remainder.substring(fromIndex + 5, toIndex).trim();
+                    String to = remainder.substring(toIndex + 3).trim();
+                    if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+                        printInvalidCommand();
+                        continue;
+                    }
+                    addEvent(tasks, description, from, to);
+                    continue;
+                }
+
+                printInvalidCommand();
             }
         }
     }
@@ -89,16 +135,53 @@ public class Sejong {
     }
 
     /**
-     * Adds a new task using the given description.
+     * Adds a new Todo task.
      *
      * @param tasks       Task list to update.
      * @param description Task description.
      */
-    private static void addTask(List<Task> tasks, String description) {
-        Task task = new Task(description);
+    private static void addTodo(List<Task> tasks, String description) {
+        Task task = new Todo(description);
         tasks.add(task);
         printLine();
-        System.out.println(" added: " + task);
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        printLine();
+    }
+
+    /**
+     * Adds a new Deadline task.
+     *
+     * @param tasks       Task list to update.
+     * @param description Task description.
+     * @param by          Deadline date/time.
+     */
+    private static void addDeadline(List<Task> tasks, String description, String by) {
+        Task task = new Deadline(description, by);
+        tasks.add(task);
+        printLine();
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        printLine();
+    }
+
+    /**
+     * Adds a new Event task.
+     *
+     * @param tasks       Task list to update.
+     * @param description Task description.
+     * @param from        Start date/time.
+     * @param to          End date/time.
+     */
+    private static void addEvent(List<Task> tasks, String description, String from, String to) {
+        Task task = new Event(description, from, to);
+        tasks.add(task);
+        printLine();
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
         printLine();
     }
 
@@ -174,6 +257,15 @@ public class Sejong {
     private static void printInvalidTaskNumber() {
         printLine();
         System.out.println(" Invalid task number.");
+        printLine();
+    }
+
+    /**
+     * Prints an invalid command response.
+     */
+    private static void printInvalidCommand() {
+        printLine();
+        System.out.println(" Invalid command.");
         printLine();
     }
 }

@@ -1,7 +1,7 @@
 /**
  * Represents a task with a description and completion status.
  */
-public class Task {
+public abstract class Task {
     private final String description;
     private boolean isDone;
 
@@ -30,6 +30,15 @@ public class Task {
     }
 
     /**
+     * Returns the task description.
+     *
+     * @return Task description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
      * Returns the status icon for the task.
      *
      * @return Status icon string.
@@ -38,8 +47,15 @@ public class Task {
         return isDone ? "[X]" : "[ ]";
     }
 
+    /**
+     * Returns the task type icon.
+     *
+     * @return Task type icon string.
+     */
+    public abstract String getTaskIcon();
+
     @Override
     public String toString() {
-        return getStatusIcon() + " " + description;
+        return getTaskIcon() + getStatusIcon() + " " + getDescription();
     }
 }
