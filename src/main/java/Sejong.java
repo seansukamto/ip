@@ -1,7 +1,7 @@
 /**
  * Entry point for the Sejong chatbot.
  */
-public class Duke {
+public class Sejong {
     public static void main(String[] args) {
         String line = "____________________________________________________________";
         System.out.println(line);
