@@ -16,6 +16,17 @@ public abstract class Task {
     }
 
     /**
+     * Creates a task with specified completion status.
+     *
+     * @param description Task description.
+     * @param isDone      Completion status.
+     */
+    public Task(String description, boolean isDone) {
+        this.description = description;
+        this.isDone = isDone;
+    }
+
+    /**
      * Marks the task as done.
      */
     public void markDone() {
@@ -53,6 +64,22 @@ public abstract class Task {
      * @return Task type icon string.
      */
     public abstract String getTaskIcon();
+
+    /**
+     * Converts the task to file storage format.
+     *
+     * @return String representation for file storage.
+     */
+    public abstract String toFileFormat();
+
+    /**
+     * Checks if the task is done.
+     *
+     * @return True if done, false otherwise.
+     */
+    public boolean isDone() {
+        return isDone;
+    }
 
     @Override
     public String toString() {

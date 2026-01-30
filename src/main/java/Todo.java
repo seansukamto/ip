@@ -11,8 +11,23 @@ public class Todo extends Task {
         super(description);
     }
 
+    /**
+     * Creates a Todo task with specified completion status.
+     *
+     * @param description Task description.
+     * @param isDone      Completion status.
+     */
+    public Todo(String description, boolean isDone) {
+        super(description, isDone);
+    }
+
     @Override
     public String getTaskIcon() {
         return "[T]";
+    }
+
+    @Override
+    public String toFileFormat() {
+        return "T | " + (isDone() ? "1" : "0") + " | " + getDescription();
     }
 }

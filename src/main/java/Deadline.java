@@ -15,9 +15,26 @@ public class Deadline extends Task {
         this.by = by;
     }
 
+    /**
+     * Creates a Deadline task with specified completion status.
+     *
+     * @param description Task description.
+     * @param by          Deadline date/time.
+     * @param isDone      Completion status.
+     */
+    public Deadline(String description, String by, boolean isDone) {
+        super(description, isDone);
+        this.by = by;
+    }
+
     @Override
     public String getTaskIcon() {
         return "[D]";
+    }
+
+    @Override
+    public String toFileFormat() {
+        return "D | " + (isDone() ? "1" : "0") + " | " + getDescription() + " | " + by;
     }
 
     @Override
