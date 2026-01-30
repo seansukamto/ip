@@ -47,6 +47,11 @@ public class Sejong {
                         continue;
                     }
 
+                    if (input.startsWith("delete ")) {
+                        sejong.handleDeleteCommand(input);
+                        continue;
+                    }
+
                     if (input.startsWith("todo")) {
                         sejong.handleTodoCommand(input);
                         continue;
@@ -112,7 +117,7 @@ public class Sejong {
         printLine();
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        System.out.println(" Now you have " + tasks.size() + " " + getTaskWord() + " in the list.");
         printLine();
     }
 
@@ -128,7 +133,7 @@ public class Sejong {
         printLine();
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        System.out.println(" Now you have " + tasks.size() + " " + getTaskWord() + " in the list.");
         printLine();
     }
 
@@ -145,7 +150,7 @@ public class Sejong {
         printLine();
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        System.out.println(" Now you have " + tasks.size() + " " + getTaskWord() + " in the list.");
         printLine();
     }
 
@@ -159,7 +164,7 @@ public class Sejong {
         task.markDone();
         printLine();
         System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("  " + task);
+        System.out.println("   " + task);
         printLine();
     }
 
@@ -173,7 +178,7 @@ public class Sejong {
         task.markNotDone();
         printLine();
         System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("  " + task);
+        System.out.println("   " + task);
         printLine();
     }
 
@@ -314,6 +319,44 @@ public class Sejong {
             throw new SejongException("OOPS!!! Please provide a valid task number.");
         }
         markTaskNotDone(taskIndex);
+    }
+
+    /**
+     * Handles the delete command.
+     *
+     * @param input User input.
+     * @throws SejongException If the task number is invalid.
+     */
+    private void handleDeleteCommand(String input) throws SejongException {
+        Integer taskIndex = parseTaskIndex(input);
+        if (isInvalidTaskIndex(taskIndex)) {
+            throw new SejongException("OOPS!!! Please provide a valid task number.");
+        }
+        deleteTask(taskIndex);
+    }
+
+    /**
+     * Deletes a task by index (0-based).
+     *
+     * @param taskIndex Index of the task to delete.
+     */
+    private void deleteTask(int taskIndex) {
+        Task task = tasks.get(taskIndex);
+        tasks.remove(taskIndex);
+        printLine();
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + tasks.size() + " " + getTaskWord() + " in the list.");
+        printLine();
+    }
+
+    /**
+     * Returns the correct singular or plural form of "task".
+     *
+     * @return "task" if there is 1 task, "tasks" otherwise.
+     */
+    private String getTaskWord() {
+        return tasks.size() == 1 ? "task" : "tasks";
     }
 
     /**
