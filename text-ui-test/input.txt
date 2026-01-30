@@ -1,0 +1,17 @@
+todo borrow book
+todo read book
+deadline return book /by Sunday
+deadline submit report /by 11/10/2019 5pm
+event team meeting /from Mon 2pm /to 4pm
+event orientation week /from 4/10/2019 /to 11/10/2019
+list
+mark 1
+mark 3
+list
+unmark 1
+list
+mark 10
+todo
+deadline incomplete
+event missing /from time
+bye
