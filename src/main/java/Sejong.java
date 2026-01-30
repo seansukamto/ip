@@ -7,13 +7,21 @@ import java.util.Scanner;
  */
 public class Sejong {
     private static final String LINE = "____________________________________________________________";
+    private static final String FILE_PATH = "./data/sejong.txt";
     private final List<Task> tasks;
+    private final Storage storage;
 
     /**
      * Creates a new Sejong chatbot instance.
      */
     public Sejong() {
+        storage = new Storage(FILE_PATH);
         tasks = new ArrayList<>();
+        try {
+            tasks.addAll(storage.loadTasks());
+        } catch (SejongException e) {
+            System.out.println("Error loading tasks: " + e.getMessage());
+        }
     }
 
     /**
@@ -114,6 +122,7 @@ public class Sejong {
     private void addTodo(String description) {
         Task task = new Todo(description);
         tasks.add(task);
+        saveTasks();
         printLine();
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
@@ -130,6 +139,7 @@ public class Sejong {
     private void addDeadline(String description, String by) {
         Task task = new Deadline(description, by);
         tasks.add(task);
+        saveTasks();
         printLine();
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
@@ -147,6 +157,7 @@ public class Sejong {
     private void addEvent(String description, String from, String to) {
         Task task = new Event(description, from, to);
         tasks.add(task);
+        saveTasks();
         printLine();
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
@@ -162,6 +173,7 @@ public class Sejong {
     private void markTaskDone(int taskIndex) {
         Task task = tasks.get(taskIndex);
         task.markDone();
+        saveTasks();
         printLine();
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("   " + task);
@@ -176,6 +188,7 @@ public class Sejong {
     private void markTaskNotDone(int taskIndex) {
         Task task = tasks.get(taskIndex);
         task.markNotDone();
+        saveTasks();
         printLine();
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("   " + task);
@@ -343,11 +356,23 @@ public class Sejong {
     private void deleteTask(int taskIndex) {
         Task task = tasks.get(taskIndex);
         tasks.remove(taskIndex);
+        saveTasks();
         printLine();
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + tasks.size() + " " + getTaskWord() + " in the list.");
         printLine();
+    }
+
+    /**
+     * Saves all tasks to the storage file.
+     */
+    private void saveTasks() {
+        try {
+            storage.saveTasks(tasks);
+        } catch (SejongException e) {
+            System.out.println("Error saving tasks: " + e.getMessage());
+        }
     }
 
     /**
