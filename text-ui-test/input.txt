@@ -14,4 +14,10 @@ mark 10
 todo
 deadline incomplete
 event missing /from time
+todo   
+deadline test /by
+event test /from /to
+event test /to Mon /from Tue
+random command
+blah blah
 bye

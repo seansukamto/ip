@@ -7,96 +7,65 @@ import java.util.Scanner;
  */
 public class Sejong {
     private static final String LINE = "____________________________________________________________";
+    private final List<Task> tasks;
 
     /**
-     * Runs the chatbot loop, storing user inputs and listing them on request.
-     *
-     * @param args Command line arguments (unused).
+     * Creates a new Sejong chatbot instance.
+     */
+    public Sejong() {
+        tasks = new ArrayList<>();
+    }
+
+    /**
+     * Main entry point.
      */
     public static void main(String[] args) {
-        List<Task> tasks = new ArrayList<>();
+        Sejong sejong = new Sejong();
         try (Scanner scanner = new Scanner(System.in)) {
-            printGreeting();
+            sejong.printGreeting();
 
             while (scanner.hasNextLine()) {
-                String input = scanner.nextLine().trim();
-                if ("bye".equals(input)) {
-                    printFarewell();
-                    break;
-                }
+                try {
+                    String input = scanner.nextLine().trim();
+                    if ("bye".equals(input)) {
+                        sejong.printFarewell();
+                        break;
+                    }
 
-                if ("list".equals(input)) {
-                    printList(tasks);
-                    continue;
-                }
-
-                if (input.startsWith("mark ")) {
-                    Integer taskIndex = parseTaskIndex(input);
-                    if (isInvalidTaskIndex(taskIndex, tasks.size())) {
-                        printInvalidTaskNumber();
+                    if ("list".equals(input)) {
+                        sejong.printList();
                         continue;
                     }
-                    markTaskDone(tasks, taskIndex);
-                    continue;
-                }
 
-                if (input.startsWith("unmark ")) {
-                    Integer taskIndex = parseTaskIndex(input);
-                    if (isInvalidTaskIndex(taskIndex, tasks.size())) {
-                        printInvalidTaskNumber();
+                    if (input.startsWith("mark ")) {
+                        sejong.handleMarkCommand(input);
                         continue;
                     }
-                    markTaskNotDone(tasks, taskIndex);
-                    continue;
-                }
 
-                if (input.startsWith("todo ")) {
-                    String description = input.substring(5).trim();
-                    if (description.isEmpty()) {
-                        printInvalidCommand();
+                    if (input.startsWith("unmark ")) {
+                        sejong.handleUnmarkCommand(input);
                         continue;
                     }
-                    addTodo(tasks, description);
-                    continue;
-                }
 
-                if (input.startsWith("deadline ")) {
-                    String remainder = input.substring(9).trim();
-                    int byIndex = remainder.indexOf("/by");
-                    if (byIndex == -1 || byIndex == 0) {
-                        printInvalidCommand();
+                    if (input.startsWith("todo")) {
+                        sejong.handleTodoCommand(input);
                         continue;
                     }
-                    String description = remainder.substring(0, byIndex).trim();
-                    String by = remainder.substring(byIndex + 3).trim();
-                    if (description.isEmpty() || by.isEmpty()) {
-                        printInvalidCommand();
-                        continue;
-                    }
-                    addDeadline(tasks, description, by);
-                    continue;
-                }
 
-                if (input.startsWith("event ")) {
-                    String remainder = input.substring(6).trim();
-                    int fromIndex = remainder.indexOf("/from");
-                    int toIndex = remainder.indexOf("/to");
-                    if (fromIndex == -1 || toIndex == -1 || fromIndex == 0 || toIndex <= fromIndex) {
-                        printInvalidCommand();
+                    if (input.startsWith("deadline")) {
+                        sejong.handleDeadlineCommand(input);
                         continue;
                     }
-                    String description = remainder.substring(0, fromIndex).trim();
-                    String from = remainder.substring(fromIndex + 5, toIndex).trim();
-                    String to = remainder.substring(toIndex + 3).trim();
-                    if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                        printInvalidCommand();
-                        continue;
-                    }
-                    addEvent(tasks, description, from, to);
-                    continue;
-                }
 
-                printInvalidCommand();
+                    if (input.startsWith("event")) {
+                        sejong.handleEventCommand(input);
+                        continue;
+                    }
+
+                    throw new SejongException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+                } catch (SejongException e) {
+                    sejong.printError(e.getMessage());
+                }
             }
         }
     }
@@ -104,7 +73,7 @@ public class Sejong {
     /**
      * Prints the greeting message.
      */
-    private static void printGreeting() {
+    private void printGreeting() {
         printLine();
         System.out.println(" Hello! I'm Sejong");
         System.out.println(" What can I do for you?");
@@ -114,7 +83,7 @@ public class Sejong {
     /**
      * Prints the farewell message.
      */
-    private static void printFarewell() {
+    private void printFarewell() {
         printLine();
         System.out.println(" Bye. Hope to see you again soon!");
         printLine();
@@ -122,10 +91,8 @@ public class Sejong {
 
     /**
      * Prints the list of tasks.
-     *
-     * @param tasks Task list to display.
      */
-    private static void printList(List<Task> tasks) {
+    private void printList() {
         printLine();
         System.out.println(" Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
@@ -137,10 +104,9 @@ public class Sejong {
     /**
      * Adds a new Todo task.
      *
-     * @param tasks       Task list to update.
      * @param description Task description.
      */
-    private static void addTodo(List<Task> tasks, String description) {
+    private void addTodo(String description) {
         Task task = new Todo(description);
         tasks.add(task);
         printLine();
@@ -153,11 +119,10 @@ public class Sejong {
     /**
      * Adds a new Deadline task.
      *
-     * @param tasks       Task list to update.
      * @param description Task description.
      * @param by          Deadline date/time.
      */
-    private static void addDeadline(List<Task> tasks, String description, String by) {
+    private void addDeadline(String description, String by) {
         Task task = new Deadline(description, by);
         tasks.add(task);
         printLine();
@@ -170,12 +135,11 @@ public class Sejong {
     /**
      * Adds a new Event task.
      *
-     * @param tasks       Task list to update.
      * @param description Task description.
      * @param from        Start date/time.
      * @param to          End date/time.
      */
-    private static void addEvent(List<Task> tasks, String description, String from, String to) {
+    private void addEvent(String description, String from, String to) {
         Task task = new Event(description, from, to);
         tasks.add(task);
         printLine();
@@ -188,10 +152,9 @@ public class Sejong {
     /**
      * Marks a task as done by index (0-based).
      *
-     * @param tasks     Task list to update.
      * @param taskIndex Index of the task.
      */
-    private static void markTaskDone(List<Task> tasks, int taskIndex) {
+    private void markTaskDone(int taskIndex) {
         Task task = tasks.get(taskIndex);
         task.markDone();
         printLine();
@@ -203,10 +166,9 @@ public class Sejong {
     /**
      * Marks a task as not done by index (0-based).
      *
-     * @param tasks     Task list to update.
      * @param taskIndex Index of the task.
      */
-    private static void markTaskNotDone(List<Task> tasks, int taskIndex) {
+    private void markTaskNotDone(int taskIndex) {
         Task task = tasks.get(taskIndex);
         task.markNotDone();
         printLine();
@@ -221,7 +183,7 @@ public class Sejong {
      * @param input User input line.
      * @return Zero-based task index, or null if parsing fails.
      */
-    private static Integer parseTaskIndex(String input) {
+    private Integer parseTaskIndex(String input) {
         String[] parts = input.trim().split("\\s+");
         if (parts.length != 2) {
             return null;
@@ -234,38 +196,141 @@ public class Sejong {
     }
 
     /**
-     * Checks if a parsed task index is invalid for the list size.
+     * Checks if a parsed task index is invalid.
      *
      * @param taskIndex Parsed task index.
-     * @param size      Task list size.
      * @return True if invalid; false otherwise.
      */
-    private static boolean isInvalidTaskIndex(Integer taskIndex, int size) {
-        return taskIndex == null || taskIndex < 0 || taskIndex >= size;
+    private boolean isInvalidTaskIndex(Integer taskIndex) {
+        return taskIndex == null || taskIndex < 0 || taskIndex >= tasks.size();
+    }
+
+    /**
+     * Handles the todo command.
+     *
+     * @param input User input.
+     * @throws SejongException If the command format is invalid.
+     */
+    private void handleTodoCommand(String input) throws SejongException {
+        if (input.trim().equals("todo")) {
+            throw new SejongException("OOPS!!! The description of a todo cannot be empty.");
+        }
+        String description = input.substring(4).trim();
+        if (description.isEmpty()) {
+            throw new SejongException("OOPS!!! The description of a todo cannot be empty.");
+        }
+        addTodo(description);
+    }
+
+    /**
+     * Handles the deadline command.
+     *
+     * @param input User input.
+     * @throws SejongException If the command format is invalid.
+     */
+    private void handleDeadlineCommand(String input) throws SejongException {
+        if (input.trim().equals("deadline")) {
+            throw new SejongException("OOPS!!! The description of a deadline cannot be empty.");
+        }
+        String remainder = input.substring(8).trim();
+        int byIndex = remainder.indexOf("/by");
+        if (byIndex == -1) {
+            throw new SejongException("OOPS!!! Please specify when the deadline is using /by.");
+        }
+        if (byIndex == 0) {
+            throw new SejongException("OOPS!!! The description of a deadline cannot be empty.");
+        }
+        String description = remainder.substring(0, byIndex).trim();
+        String by = remainder.substring(byIndex + 3).trim();
+        if (description.isEmpty()) {
+            throw new SejongException("OOPS!!! The description of a deadline cannot be empty.");
+        }
+        if (by.isEmpty()) {
+            throw new SejongException("OOPS!!! The deadline time cannot be empty.");
+        }
+        addDeadline(description, by);
+    }
+
+    /**
+     * Handles the event command.
+     *
+     * @param input User input.
+     * @throws SejongException If the command format is invalid.
+     */
+    private void handleEventCommand(String input) throws SejongException {
+        if (input.trim().equals("event")) {
+            throw new SejongException("OOPS!!! The description of an event cannot be empty.");
+        }
+        String remainder = input.substring(5).trim();
+        int fromIndex = remainder.indexOf("/from");
+        int toIndex = remainder.indexOf("/to");
+        if (fromIndex == -1 || toIndex == -1) {
+            throw new SejongException("OOPS!!! Please specify the event time using /from and /to.");
+        }
+        if (fromIndex == 0) {
+            throw new SejongException("OOPS!!! The description of an event cannot be empty.");
+        }
+        if (toIndex <= fromIndex) {
+            throw new SejongException("OOPS!!! Please use /from before /to.");
+        }
+        String description = remainder.substring(0, fromIndex).trim();
+        String from = remainder.substring(fromIndex + 5, toIndex).trim();
+        String to = remainder.substring(toIndex + 3).trim();
+        if (description.isEmpty()) {
+            throw new SejongException("OOPS!!! The description of an event cannot be empty.");
+        }
+        if (from.isEmpty()) {
+            throw new SejongException("OOPS!!! The event start time cannot be empty.");
+        }
+        if (to.isEmpty()) {
+            throw new SejongException("OOPS!!! The event end time cannot be empty.");
+        }
+        addEvent(description, from, to);
+    }
+
+    /**
+     * Handles the mark command.
+     *
+     * @param input User input.
+     * @throws SejongException If the task number is invalid.
+     */
+    private void handleMarkCommand(String input) throws SejongException {
+        Integer taskIndex = parseTaskIndex(input);
+        if (isInvalidTaskIndex(taskIndex)) {
+            throw new SejongException("OOPS!!! Please provide a valid task number.");
+        }
+        markTaskDone(taskIndex);
+    }
+
+    /**
+     * Handles the unmark command.
+     *
+     * @param input User input.
+     * @throws SejongException If the task number is invalid.
+     */
+    private void handleUnmarkCommand(String input) throws SejongException {
+        Integer taskIndex = parseTaskIndex(input);
+        if (isInvalidTaskIndex(taskIndex)) {
+            throw new SejongException("OOPS!!! Please provide a valid task number.");
+        }
+        markTaskNotDone(taskIndex);
     }
 
     /**
      * Prints a consistent line separator.
      */
-    private static void printLine() {
+    private void printLine() {
         System.out.println(LINE);
     }
 
     /**
-     * Prints an invalid task number response.
+     * Prints an error message.
+     *
+     * @param message Error message to display.
      */
-    private static void printInvalidTaskNumber() {
+    private void printError(String message) {
         printLine();
-        System.out.println(" Invalid task number.");
-        printLine();
-    }
-
-    /**
-     * Prints an invalid command response.
-     */
-    private static void printInvalidCommand() {
-        printLine();
-        System.out.println(" Invalid command.");
+        System.out.println(" " + message);
         printLine();
     }
 }
