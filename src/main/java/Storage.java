@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,14 +109,17 @@ public class Storage {
             if (parts.length < 4) {
                 throw new SejongException("Invalid deadline format");
             }
-            String by = parts[3].trim();
+            String byStr = parts[3].trim();
+            LocalDate by = LocalDate.parse(byStr);
             return new Deadline(description, by, isDone);
         case "E":
             if (parts.length < 5) {
                 throw new SejongException("Invalid event format");
             }
-            String from = parts[3].trim();
-            String to = parts[4].trim();
+            String fromStr = parts[3].trim();
+            String toStr = parts[4].trim();
+            LocalDate from = LocalDate.parse(fromStr);
+            LocalDate to = LocalDate.parse(toStr);
             return new Event(description, from, to, isDone);
         default:
             throw new SejongException("Unknown task type: " + type);

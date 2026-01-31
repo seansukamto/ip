@@ -75,6 +75,11 @@ public class Sejong {
                         continue;
                     }
 
+                    if (input.startsWith("find")) {
+                        sejong.handleFindCommand(input);
+                        continue;
+                    }
+
                     throw new SejongException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                 } catch (SejongException e) {
                     sejong.printError(e.getMessage());
@@ -135,8 +140,9 @@ public class Sejong {
      *
      * @param description Task description.
      * @param by          Deadline date/time.
+     * @throws SejongException If date format is invalid.
      */
-    private void addDeadline(String description, String by) {
+    private void addDeadline(String description, String by) throws SejongException {
         Task task = new Deadline(description, by);
         tasks.add(task);
         saveTasks();
@@ -153,8 +159,9 @@ public class Sejong {
      * @param description Task description.
      * @param from        Start date/time.
      * @param to          End date/time.
+     * @throws SejongException If date format is invalid.
      */
-    private void addEvent(String description, String from, String to) {
+    private void addEvent(String description, String from, String to) throws SejongException {
         Task task = new Event(description, from, to);
         tasks.add(task);
         saveTasks();
@@ -362,6 +369,55 @@ public class Sejong {
         System.out.println("   " + task);
         System.out.println(" Now you have " + tasks.size() + " " + getTaskWord() + " in the list.");
         printLine();
+    }
+
+    /**
+     * Handles the find command to search for tasks on a specific date.
+     *
+     * @param input User input.
+     * @throws SejongException If the date format is invalid.
+     */
+    private void handleFindCommand(String input) throws SejongException {
+        if (input.trim().equals("find")) {
+            throw new SejongException("OOPS!!! Please provide a date to search for (yyyy-MM-dd format).");
+        }
+        String dateStr = input.substring(4).trim();
+        if (dateStr.isEmpty()) {
+            throw new SejongException("OOPS!!! Please provide a date to search for (yyyy-MM-dd format).");
+        }
+
+        try {
+            java.time.LocalDate searchDate = java.time.LocalDate.parse(dateStr);
+            printLine();
+            System.out.println(" Here are the tasks on " + searchDate.format(
+                java.time.format.DateTimeFormatter.ofPattern("MMM dd yyyy")) + ":");
+            
+            int count = 0;
+            for (int i = 0; i < tasks.size(); i++) {
+                Task task = tasks.get(i);
+                boolean matches = false;
+                
+                if (task instanceof Deadline) {
+                    Deadline deadline = (Deadline) task;
+                    matches = deadline.getBy().equals(searchDate);
+                } else if (task instanceof Event) {
+                    Event event = (Event) task;
+                    matches = !searchDate.isBefore(event.getFrom()) && !searchDate.isAfter(event.getTo());
+                }
+                
+                if (matches) {
+                    count++;
+                    System.out.println(" " + count + "." + task);
+                }
+            }
+            
+            if (count == 0) {
+                System.out.println(" No tasks found on this date.");
+            }
+            printLine();
+        } catch (java.time.format.DateTimeParseException e) {
+            throw new SejongException("Invalid date format! Please use yyyy-MM-dd format (e.g., 2019-12-02)");
+        }
     }
 
     /**

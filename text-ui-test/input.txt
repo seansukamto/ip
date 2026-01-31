@@ -1,9 +1,9 @@
 todo borrow book
 todo read book
-deadline return book /by Sunday
-deadline submit report /by 11/10/2019 5pm
-event team meeting /from Mon 2pm /to 4pm
-event orientation week /from 4/10/2019 /to 11/10/2019
+deadline return book /by 2019-12-01
+deadline submit report /by 2019-10-11
+event team meeting /from 2019-12-10 /to 2019-12-10
+event orientation week /from 2019-10-04 /to 2019-10-11
 list
 mark 1
 mark 3
@@ -20,7 +20,9 @@ event missing /from time
 todo   
 deadline test /by
 event test /from /to
-event test /to Mon /from Tue
+event test /to 2019-12-01 /from 2019-12-02
+find 2019-12-10
+find 2020-01-01
 random command
 blah blah
 bye
