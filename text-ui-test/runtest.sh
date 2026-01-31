@@ -12,17 +12,17 @@ then
     rm ACTUAL.TXT
 fi
 
-# delete data from previous run
-if [ -d "../data" ]
-then
-    rm -rf ../data
-fi
-
 # compile the code into the bin folder, terminates if error occurred
 if ! javac -cp ../src/main/java -Xlint:none -d ../bin ../src/main/java/*.java
 then
     echo "********** BUILD FAILURE **********"
     exit 1
+fi
+
+# delete data directory to ensure clean test
+if [ -d "../data" ]
+then
+    rm -rf ../data
 fi
 
 # run the program, feed commands from input.txt file and redirect the output to the ACTUAL.TXT
