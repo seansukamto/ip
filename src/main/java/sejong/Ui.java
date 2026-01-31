@@ -1,3 +1,6 @@
+package sejong;
+
+import sejong.task.Task;
 import java.util.Scanner;
 
 /**

@@ -1,3 +1,8 @@
+package sejong;
+
+import sejong.command.Command;
+import sejong.task.TaskList;
+
 /**
  * Entry point for the Sejong chatbot.
  */

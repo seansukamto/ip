@@ -1,3 +1,10 @@
+package sejong.command;
+
+import sejong.SejongException;
+import sejong.Storage;
+import sejong.Ui;
+import sejong.task.TaskList;
+
 /**
  * Represents an executable command.
  */

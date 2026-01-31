@@ -1,3 +1,12 @@
+package sejong.command;
+
+import sejong.SejongException;
+import sejong.Storage;
+import sejong.Ui;
+import sejong.task.Deadline;
+import sejong.task.Task;
+import sejong.task.TaskList;
+
 /**
  * Command to add a deadline task.
  */

@@ -1,3 +1,12 @@
+package sejong.command;
+
+import sejong.SejongException;
+import sejong.Storage;
+import sejong.Ui;
+import sejong.task.Event;
+import sejong.task.Task;
+import sejong.task.TaskList;
+
 /**
  * Command to add an event task.
  */

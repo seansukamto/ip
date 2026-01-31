@@ -1,3 +1,5 @@
+package sejong;
+
 /**
  * Represents exceptions specific to the Sejong chatbot.
  */
