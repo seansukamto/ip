@@ -23,6 +23,13 @@ public class FindCommand extends Command {
         this.date = date;
     }
 
+    /**
+     * Executes the find command by searching for tasks on the specified date.
+     *
+     * @param tasks   The task list.
+     * @param ui      The user interface.
+     * @param storage The storage handler (not used).
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         java.util.List<Task> foundTasks = tasks.findTasksOnDate(date);

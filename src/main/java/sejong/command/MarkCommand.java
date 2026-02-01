@@ -21,6 +21,14 @@ public class MarkCommand extends Command {
         this.taskIndex = taskIndex;
     }
 
+    /**
+     * Executes the mark command by marking the specified task as done.
+     *
+     * @param tasks   The task list.
+     * @param ui      The user interface.
+     * @param storage The storage handler.
+     * @throws SejongException If the task index is invalid or there is an error saving.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SejongException {
         Task task = tasks.markTask(taskIndex);

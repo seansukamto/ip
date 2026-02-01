@@ -72,16 +72,31 @@ public class Deadline extends Task {
         return by;
     }
 
+    /**
+     * Returns the task type icon for a Deadline task.
+     *
+     * @return Task type icon "[D]".
+     */
     @Override
     public String getTaskIcon() {
         return "[D]";
     }
 
+    /**
+     * Converts the task to file storage format.
+     *
+     * @return String representation in format: "D | STATUS | DESCRIPTION | DATE".
+     */
     @Override
     public String toFileFormat() {
         return "D | " + (isDone() ? "1" : "0") + " | " + getDescription() + " | " + by;
     }
 
+    /**
+     * Returns a string representation of the deadline task with formatted date.
+     *
+     * @return String representation with task icon, status, description, and formatted deadline.
+     */
     @Override
     public String toString() {
         String formattedDate = by.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));

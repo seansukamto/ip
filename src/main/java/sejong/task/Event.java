@@ -89,16 +89,31 @@ public class Event extends Task {
         return to;
     }
 
+    /**
+     * Returns the task type icon for an Event task.
+     *
+     * @return Task type icon "[E]".
+     */
     @Override
     public String getTaskIcon() {
         return "[E]";
     }
 
+    /**
+     * Converts the task to file storage format.
+     *
+     * @return String representation in format: "E | STATUS | DESCRIPTION | FROM | TO".
+     */
     @Override
     public String toFileFormat() {
         return "E | " + (isDone() ? "1" : "0") + " | " + getDescription() + " | " + from + " | " + to;
     }
 
+    /**
+     * Returns a string representation of the event task with formatted dates.
+     *
+     * @return String representation with task icon, status, description, and formatted date range.
+     */
     @Override
     public String toString() {
         String formattedFrom = from.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));

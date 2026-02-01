@@ -16,8 +16,17 @@ import java.time.format.DateTimeParseException;
 
 /**
  * Parses user input into commands and arguments.
+ * This class should not be instantiated as it only contains static methods.
  */
 public class Parser {
+    /**
+     * Private constructor to prevent instantiation.
+     * This class should not be instantiated as it only provides static utility methods.
+     */
+    private Parser() {
+        // Private constructor to prevent instantiation
+    }
+
 
     /**
      * Parses user input into a Command object.

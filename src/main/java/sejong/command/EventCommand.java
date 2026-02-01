@@ -28,6 +28,14 @@ public class EventCommand extends Command {
         this.to = to;
     }
 
+    /**
+     * Executes the event command by creating and adding a new event task.
+     *
+     * @param tasks   The task list.
+     * @param ui      The user interface.
+     * @param storage The storage handler.
+     * @throws SejongException If there is an error with the date format or saving the task.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SejongException {
         Task task = new Event(description, from, to);

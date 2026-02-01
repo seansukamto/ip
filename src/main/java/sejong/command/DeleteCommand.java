@@ -21,6 +21,14 @@ public class DeleteCommand extends Command {
         this.taskIndex = taskIndex;
     }
 
+    /**
+     * Executes the delete command by removing the specified task from the list.
+     *
+     * @param tasks   The task list.
+     * @param ui      The user interface.
+     * @param storage The storage handler.
+     * @throws SejongException If the task index is invalid or there is an error saving.
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SejongException {
         Task task = tasks.deleteTask(taskIndex);

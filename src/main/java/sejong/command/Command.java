@@ -10,6 +10,13 @@ import sejong.task.TaskList;
  */
 public abstract class Command {
     /**
+     * Creates a new Command.
+     */
+    public Command() {
+        // Default constructor
+    }
+
+    /**
      * Executes the command.
      *
      * @param tasks   The task list.

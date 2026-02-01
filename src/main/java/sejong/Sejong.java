@@ -50,7 +50,9 @@ public class Sejong {
     }
 
     /**
-     * Main entry point.
+     * Main entry point for the Sejong application.
+     *
+     * @param args Command line arguments (not used).
      */
     public static void main(String[] args) {
         new Sejong(FILE_PATH).run();

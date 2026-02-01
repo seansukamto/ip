@@ -23,11 +23,21 @@ public class Todo extends Task {
         super(description, isDone);
     }
 
+    /**
+     * Returns the task type icon for a Todo task.
+     *
+     * @return Task type icon "[T]".
+     */
     @Override
     public String getTaskIcon() {
         return "[T]";
     }
 
+    /**
+     * Converts the task to file storage format.
+     *
+     * @return String representation in format: "T | STATUS | DESCRIPTION".
+     */
     @Override
     public String toFileFormat() {
         return "T | " + (isDone() ? "1" : "0") + " | " + getDescription();
