@@ -1,5 +1,7 @@
 package sejong;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import sejong.command.ByeCommand;
 import sejong.command.Command;
 import sejong.command.DeadlineCommand;
@@ -10,9 +12,6 @@ import sejong.command.ListCommand;
 import sejong.command.MarkCommand;
 import sejong.command.TodoCommand;
 import sejong.command.UnmarkCommand;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 /**
  * Parses user input into commands and arguments.
