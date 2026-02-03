@@ -1,7 +1,9 @@
 package sejong;
 
-import sejong.task.Task;
+import java.util.List;
 import java.util.Scanner;
+
+import sejong.task.Task;
 
 /**
  * Handles interactions with the user.
@@ -143,7 +145,7 @@ public class Ui {
      *
      * @param tasks List of tasks to display.
      */
-    public void showTaskList(java.util.List<Task> tasks) {
+    public void showTaskList(List<Task> tasks) {
         showLine();
         System.out.println(" Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
@@ -158,7 +160,7 @@ public class Ui {
      * @param tasks List of matching tasks.
      * @param date  Formatted date string.
      */
-    public void showFoundTasks(java.util.List<Task> tasks, String date) {
+    public void showFoundTasks(List<Task> tasks, String date) {
         showLine();
         System.out.println(" Here are the tasks on " + date + ":");
         if (tasks.isEmpty()) {

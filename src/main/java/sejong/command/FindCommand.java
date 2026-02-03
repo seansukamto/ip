@@ -1,12 +1,13 @@
 package sejong.command;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import sejong.Storage;
 import sejong.Ui;
 import sejong.task.Task;
 import sejong.task.TaskList;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Command to find tasks on a specific date.
@@ -25,7 +26,7 @@ public class FindCommand extends Command {
 
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
-        java.util.List<Task> foundTasks = tasks.findTasksOnDate(date);
+        List<Task> foundTasks = tasks.findTasksOnDate(date);
         String formattedDate = date.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));
         ui.showFoundTasks(foundTasks, formattedDate);
     }

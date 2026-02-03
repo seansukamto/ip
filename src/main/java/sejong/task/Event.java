@@ -1,10 +1,10 @@
 package sejong.task;
 
-import sejong.SejongException;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import sejong.SejongException;
 
 /**
  * Represents a task that occurs during a specific time period.
@@ -103,7 +103,7 @@ public class Event extends Task {
     public String toString() {
         String formattedFrom = from.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));
         String formattedTo = to.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));
-        return getTaskIcon() + getStatusIcon() + " " + getDescription() 
-               + " (from: " + formattedFrom + " to: " + formattedTo + ")";
+        return getTaskIcon() + getStatusIcon() + " " + getDescription()
+                + " (from: " + formattedFrom + " to: " + formattedTo + ")";
     }
 }

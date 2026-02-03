@@ -55,5 +55,4 @@ public class Sejong {
     public static void main(String[] args) {
         new Sejong(FILE_PATH).run();
     }
-
 }
