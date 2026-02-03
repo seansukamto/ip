@@ -1,33 +1,29 @@
 package sejong.command;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-
 import sejong.Storage;
 import sejong.Ui;
 import sejong.task.Task;
 import sejong.task.TaskList;
 
 /**
- * Command to find tasks on a specific date.
+ * Command to find tasks by searching for a keyword in their descriptions.
  */
 public class FindCommand extends Command {
-    private final LocalDate date;
+    private final String keyword;
 
     /**
-     * Creates a FindCommand for the specified date.
+     * Creates a FindCommand for the specified keyword.
      *
-     * @param date Date to search for.
+     * @param keyword Keyword to search for.
      */
-    public FindCommand(LocalDate date) {
-        this.date = date;
+    public FindCommand(String keyword) {
+        this.keyword = keyword;
     }
 
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
-        List<Task> foundTasks = tasks.findTasksOnDate(date);
-        String formattedDate = date.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));
-        ui.showFoundTasks(foundTasks, formattedDate);
+        List<Task> foundTasks = tasks.findTasksByKeyword(keyword);
+        ui.showFoundTasksByKeyword(foundTasks);
     }
 }

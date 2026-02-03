@@ -174,6 +174,24 @@ public class Ui {
     }
 
     /**
+     * Shows tasks found by keyword search.
+     *
+     * @param tasks List of matching tasks.
+     */
+    public void showFoundTasksByKeyword(List<Task> tasks) {
+        showLine();
+        if (tasks.isEmpty()) {
+            System.out.println(" No matching tasks found.");
+        } else {
+            System.out.println(" Here are the matching tasks in your list:");
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println(" " + (i + 1) + "." + tasks.get(i));
+            }
+        }
+        showLine();
+    }
+
+    /**
      * Returns the correct singular or plural form of "task".
      *
      * @param count Number of tasks.

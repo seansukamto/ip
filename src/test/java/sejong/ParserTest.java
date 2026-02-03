@@ -169,32 +169,30 @@ public class ParserTest {
 
     @Test
     public void parseFindCommand_validInput_success() throws SejongException {
-        LocalDate result = Parser.parseFindCommand("find 2019-12-02");
-        assertEquals(LocalDate.of(2019, 12, 2), result);
+        String result = Parser.parseFindCommand("find book");
+        assertEquals("book", result);
     }
 
     @Test
-    public void parseFindCommand_emptyDate_throwsException() {
+    public void parseFindCommand_emptyKeyword_throwsException() {
         SejongException exception = assertThrows(SejongException.class, () -> {
             Parser.parseFindCommand("find");
         });
-        assertEquals("OOPS!!! Please provide a date to search for (yyyy-MM-dd format).", exception.getMessage());
+        assertEquals("OOPS!!! Please provide a keyword to search for.", exception.getMessage());
     }
 
     @Test
-    public void parseFindCommand_invalidDateFormat_throwsException() {
+    public void parseFindCommand_whitespaceOnly_throwsException() {
         SejongException exception = assertThrows(SejongException.class, () -> {
-            Parser.parseFindCommand("find 02-12-2019");
+            Parser.parseFindCommand("find   ");
         });
-        assertEquals("Invalid date format! Please use yyyy-MM-dd format (e.g., 2019-12-02)", exception.getMessage());
+        assertEquals("OOPS!!! Please provide a keyword to search for.", exception.getMessage());
     }
 
     @Test
-    public void parseFindCommand_invalidDate_throwsException() {
-        SejongException exception = assertThrows(SejongException.class, () -> {
-            Parser.parseFindCommand("find 2019-13-32");
-        });
-        assertEquals("Invalid date format! Please use yyyy-MM-dd format (e.g., 2019-12-02)", exception.getMessage());
+    public void parseFindCommand_multipleWords_success() throws SejongException {
+        String result = Parser.parseFindCommand("find project meeting");
+        assertEquals("project meeting", result);
     }
 
     @Test

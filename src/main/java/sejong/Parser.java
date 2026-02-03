@@ -11,8 +11,6 @@ import sejong.command.MarkCommand;
 import sejong.command.TodoCommand;
 import sejong.command.UnmarkCommand;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 /**
  * Parses user input into commands and arguments.
@@ -66,8 +64,8 @@ public class Parser {
         }
 
         if (fullCommand.startsWith("find")) {
-            LocalDate date = parseFindCommand(fullCommand);
-            return new FindCommand(date);
+            String keyword = parseFindCommand(fullCommand);
+            return new FindCommand(keyword);
         }
 
         throw new SejongException("OOPS!!! I'm sorry, but I don't know what that means :-(");
@@ -182,21 +180,17 @@ public class Parser {
      * Parses a find command.
      *
      * @param input User input.
-     * @return The date to search for.
-     * @throws SejongException If the date format is invalid.
+     * @return The keyword to search for.
+     * @throws SejongException If the keyword is empty.
      */
-    public static LocalDate parseFindCommand(String input) throws SejongException {
+    public static String parseFindCommand(String input) throws SejongException {
         if (input.trim().equals("find")) {
-            throw new SejongException("OOPS!!! Please provide a date to search for (yyyy-MM-dd format).");
+            throw new SejongException("OOPS!!! Please provide a keyword to search for.");
         }
-        String dateStr = input.substring(4).trim();
-        if (dateStr.isEmpty()) {
-            throw new SejongException("OOPS!!! Please provide a date to search for (yyyy-MM-dd format).");
+        String keyword = input.substring(4).trim();
+        if (keyword.isEmpty()) {
+            throw new SejongException("OOPS!!! Please provide a keyword to search for.");
         }
-        try {
-            return LocalDate.parse(dateStr);
-        } catch (DateTimeParseException e) {
-            throw new SejongException("Invalid date format! Please use yyyy-MM-dd format (e.g., 2019-12-02)");
-        }
+        return keyword;
     }
 }
