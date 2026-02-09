@@ -3,7 +3,7 @@ package sejong.command;
 import sejong.SejongException;
 import sejong.Storage;
 import sejong.Ui;
-import sejong.task.TaskList;
+import sejong.TaskList;
 
 /**
  * Represents an executable command.

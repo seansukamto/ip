@@ -4,7 +4,7 @@ import sejong.SejongException;
 import sejong.Storage;
 import sejong.Ui;
 import sejong.task.Task;
-import sejong.task.TaskList;
+import sejong.TaskList;
 import sejong.task.Todo;
 
 /**

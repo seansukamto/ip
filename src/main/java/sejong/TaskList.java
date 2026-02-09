@@ -1,9 +1,12 @@
-package sejong.task;
+package sejong;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import sejong.SejongException;
+
+import sejong.task.Deadline;
+import sejong.task.Event;
+import sejong.task.Task;
 
 /**
  * Contains the task list and operations to manipulate it.

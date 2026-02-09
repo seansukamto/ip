@@ -5,7 +5,7 @@ import sejong.Storage;
 import sejong.Ui;
 import sejong.task.Deadline;
 import sejong.task.Task;
-import sejong.task.TaskList;
+import sejong.TaskList;
 
 /**
  * Command to add a deadline task.

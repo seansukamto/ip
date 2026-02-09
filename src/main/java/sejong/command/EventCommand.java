@@ -5,7 +5,7 @@ import sejong.Storage;
 import sejong.Ui;
 import sejong.task.Event;
 import sejong.task.Task;
-import sejong.task.TaskList;
+import sejong.TaskList;
 
 /**
  * Command to add an event task.

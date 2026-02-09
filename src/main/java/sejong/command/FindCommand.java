@@ -1,10 +1,11 @@
 package sejong.command;
 
 import java.util.List;
+
 import sejong.Storage;
+import sejong.TaskList;
 import sejong.Ui;
 import sejong.task.Task;
-import sejong.task.TaskList;
 
 /**
  * Command to find tasks by searching for a keyword in their descriptions.

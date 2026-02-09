@@ -2,7 +2,7 @@ package sejong.command;
 
 import sejong.Storage;
 import sejong.Ui;
-import sejong.task.TaskList;
+import sejong.TaskList;
 
 /**
  * Command to list all tasks.

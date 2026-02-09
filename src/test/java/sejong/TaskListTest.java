@@ -1,4 +1,4 @@
-package sejong.task;
+package sejong;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,7 +11,10 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import sejong.SejongException;
+import sejong.task.Deadline;
+import sejong.task.Event;
+import sejong.task.Task;
+import sejong.task.Todo;
 
 /**
  * Test class for TaskList.
