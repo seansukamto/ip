@@ -1,5 +1,6 @@
 package sejong;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -192,6 +193,15 @@ public class Ui {
     }
 
     /**
+     * Shows all tasks in the list (varargs overload).
+     *
+     * @param tasks Tasks to display.
+     */
+    public void showTaskList(Task... tasks) {
+        showTaskList(Arrays.asList(tasks));
+    }
+
+    /**
      * Shows all tasks in the list.
      *
      * @param tasks List of tasks to display.
@@ -203,6 +213,16 @@ public class Ui {
             out(" " + (i + 1) + "." + tasks.get(i));
         }
         showLine();
+    }
+
+    /**
+     * Shows tasks found on a specific date (varargs overload).
+     *
+     * @param date  Formatted date string.
+     * @param tasks Matching tasks to display.
+     */
+    public void showFoundTasks(String date, Task... tasks) {
+        showFoundTasks(Arrays.asList(tasks), date);
     }
 
     /**
@@ -222,6 +242,15 @@ public class Ui {
             }
         }
         showLine();
+    }
+
+    /**
+     * Shows tasks found by keyword search (varargs overload).
+     *
+     * @param tasks Matching tasks to display.
+     */
+    public void showFoundTasksByKeyword(Task... tasks) {
+        showFoundTasksByKeyword(Arrays.asList(tasks));
     }
 
     /**

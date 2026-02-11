@@ -2,6 +2,7 @@ package sejong;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sejong.task.Deadline;
@@ -28,6 +29,15 @@ public class TaskList {
      */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
+    }
+
+    /**
+     * Creates a TaskList with the given tasks (varargs).
+     *
+     * @param tasks Tasks to initialize with.
+     */
+    public TaskList(Task... tasks) {
+        this.tasks = new ArrayList<>(Arrays.asList(tasks));
     }
 
     /**

@@ -94,7 +94,7 @@ public class Sejong {
     /**
      * Main entry point for CLI. For GUI, use Launcher instead.
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         new Sejong(FILE_PATH).run();
     }
 }

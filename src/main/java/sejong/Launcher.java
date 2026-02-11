@@ -13,7 +13,7 @@ public class Launcher {
      *
      * @param args Command-line arguments (passed to JavaFX Application).
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         Application.launch(Main.class, args);
     }
 }
