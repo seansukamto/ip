@@ -1,0 +1,10 @@
+/* Minimal styling so user and Sejong dialogs are distinct */
+.user-dialog {
+    -fx-background-color: #cce5ff;
+    -fx-background-radius: 5;
+}
+
+.sejong-dialog {
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 5;
+}

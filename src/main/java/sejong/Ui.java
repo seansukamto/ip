@@ -7,41 +7,81 @@ import sejong.task.Task;
 
 /**
  * Handles interactions with the user.
+ * Supports both CLI (System.out) and GUI (append to a StringBuilder) modes.
  */
 public class Ui {
     private static final String LINE = "____________________________________________________________";
     private final Scanner scanner;
+    /** When non-null, show* methods append here instead of printing (GUI mode). */
+    private final StringBuilder responseBuffer;
 
     /**
-     * Creates a new Ui instance.
+     * Creates a new Ui instance for CLI (console output).
      */
     public Ui() {
         this.scanner = new Scanner(System.in);
+        this.responseBuffer = null;
     }
 
     /**
-     * Reads a command from the user.
+     * Creates a new Ui instance for GUI that captures output to the given buffer.
+     *
+     * @param responseBuffer Buffer to append all shown messages to (e.g. for display in GUI).
+     */
+    public Ui(StringBuilder responseBuffer) {
+        this.scanner = null;
+        this.responseBuffer = responseBuffer;
+    }
+
+    /**
+     * Reads a command from the user. Only valid for CLI mode.
      *
      * @return User input string.
      */
     public String readCommand() {
-        return scanner.hasNextLine() ? scanner.nextLine().trim() : "";
+        return scanner != null && scanner.hasNextLine() ? scanner.nextLine().trim() : "";
     }
 
     /**
-     * Checks if there is more input.
+     * Checks if there is more input. Only valid for CLI mode.
      *
      * @return True if there is more input, false otherwise.
      */
     public boolean hasNextLine() {
-        return scanner.hasNextLine();
+        return scanner != null && scanner.hasNextLine();
     }
 
     /**
-     * Closes the scanner.
+     * Closes the scanner. No-op in GUI mode.
      */
     public void close() {
-        scanner.close();
+        if (scanner != null) {
+            scanner.close();
+        }
+    }
+
+    /**
+     * Clears the captured response (GUI mode only). Use before running a command to capture only that command's output.
+     */
+    public void clearResponse() {
+        if (responseBuffer != null) {
+            responseBuffer.setLength(0);
+        }
+    }
+
+    /**
+     * Returns and clears the captured response (GUI mode only).
+     * If not in GUI mode, returns empty string.
+     *
+     * @return The accumulated response text since last clear.
+     */
+    public String getAndClearResponse() {
+        if (responseBuffer == null) {
+            return "";
+        }
+        String s = responseBuffer.toString();
+        responseBuffer.setLength(0);
+        return s;
     }
 
     /**
@@ -49,8 +89,8 @@ public class Ui {
      */
     public void showWelcome() {
         showLine();
-        System.out.println(" Hello! I'm Sejong");
-        System.out.println(" What can I do for you?");
+        out(" Hello! I'm Sejong");
+        out(" What can I do for you?");
         showLine();
     }
 
@@ -59,7 +99,7 @@ public class Ui {
      */
     public void showGoodbye() {
         showLine();
-        System.out.println(" Bye. Hope to see you again soon!");
+        out(" Bye. Hope to see you again soon!");
         showLine();
     }
 
@@ -67,7 +107,7 @@ public class Ui {
      * Shows a line separator.
      */
     public void showLine() {
-        System.out.println(LINE);
+        out(LINE);
     }
 
     /**
@@ -77,8 +117,19 @@ public class Ui {
      */
     public void showError(String message) {
         showLine();
-        System.out.println(" " + message);
+        out(" " + message);
         showLine();
+    }
+
+    /**
+     * Outputs a line. Uses responseBuffer in GUI mode, System.out in CLI mode.
+     */
+    private void out(String line) {
+        if (responseBuffer != null) {
+            responseBuffer.append(line).append("\n");
+        } else {
+            System.out.println(line);
+        }
     }
 
     /**
@@ -96,9 +147,9 @@ public class Ui {
      */
     public void showTaskAdded(Task task, int size) {
         showLine();
-        System.out.println(" Got it. I've added this task:");
-        System.out.println("   " + task);
-        System.out.println(" Now you have " + size + " " + getTaskWord(size) + " in the list.");
+        out(" Got it. I've added this task:");
+        out("   " + task);
+        out(" Now you have " + size + " " + getTaskWord(size) + " in the list.");
         showLine();
     }
 
@@ -109,8 +160,8 @@ public class Ui {
      */
     public void showTaskMarked(Task task) {
         showLine();
-        System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("   " + task);
+        out(" Nice! I've marked this task as done:");
+        out("   " + task);
         showLine();
     }
 
@@ -121,8 +172,8 @@ public class Ui {
      */
     public void showTaskUnmarked(Task task) {
         showLine();
-        System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("   " + task);
+        out(" OK, I've marked this task as not done yet:");
+        out("   " + task);
         showLine();
     }
 
@@ -134,9 +185,9 @@ public class Ui {
      */
     public void showTaskDeleted(Task task, int size) {
         showLine();
-        System.out.println(" Noted. I've removed this task:");
-        System.out.println("   " + task);
-        System.out.println(" Now you have " + size + " " + getTaskWord(size) + " in the list.");
+        out(" Noted. I've removed this task:");
+        out("   " + task);
+        out(" Now you have " + size + " " + getTaskWord(size) + " in the list.");
         showLine();
     }
 
@@ -147,9 +198,9 @@ public class Ui {
      */
     public void showTaskList(List<Task> tasks) {
         showLine();
-        System.out.println(" Here are the tasks in your list:");
+        out(" Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + tasks.get(i));
+            out(" " + (i + 1) + "." + tasks.get(i));
         }
         showLine();
     }
@@ -162,12 +213,12 @@ public class Ui {
      */
     public void showFoundTasks(List<Task> tasks, String date) {
         showLine();
-        System.out.println(" Here are the tasks on " + date + ":");
+        out(" Here are the tasks on " + date + ":");
         if (tasks.isEmpty()) {
-            System.out.println(" No tasks found on this date.");
+            out(" No tasks found on this date.");
         } else {
             for (int i = 0; i < tasks.size(); i++) {
-                System.out.println(" " + (i + 1) + "." + tasks.get(i));
+                out(" " + (i + 1) + "." + tasks.get(i));
             }
         }
         showLine();
@@ -181,11 +232,11 @@ public class Ui {
     public void showFoundTasksByKeyword(List<Task> tasks) {
         showLine();
         if (tasks.isEmpty()) {
-            System.out.println(" No matching tasks found.");
+            out(" No matching tasks found.");
         } else {
-            System.out.println(" Here are the matching tasks in your list:");
+            out(" Here are the matching tasks in your list:");
             for (int i = 0; i < tasks.size(); i++) {
-                System.out.println(" " + (i + 1) + "." + tasks.get(i));
+                out(" " + (i + 1) + "." + tasks.get(i));
             }
         }
         showLine();
