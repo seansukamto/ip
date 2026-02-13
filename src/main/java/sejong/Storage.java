@@ -19,6 +19,9 @@ import java.util.List;
  * Handles loading and saving tasks to/from a file.
  */
 public class Storage {
+    /** Delimiter used in file format. */
+    private static final String DELIMITER = " | ";
+    
     private final String filePath;
 
     /**
@@ -27,6 +30,8 @@ public class Storage {
      * @param filePath Relative path to the storage file.
      */
     public Storage(String filePath) {
+        assert filePath != null : "File path should not be null";
+        assert !filePath.isEmpty() : "File path should not be empty";
         this.filePath = filePath;
     }
 
@@ -53,10 +58,11 @@ public class Storage {
                 }
                 try {
                     Task task = parseTask(line);
+                    assert task != null : "Parsed task should not be null";
                     tasks.add(task);
                 } catch (Exception e) {
                     // Skip corrupted lines but continue loading
-                    System.out.println("Warning: Skipping corrupted line: " + line);
+                    // Note: Errors are silently ignored to allow graceful recovery from corrupted data
                 }
             }
         } catch (IOException e) {
@@ -73,6 +79,7 @@ public class Storage {
      * @throws SejongException If there is an error saving the file.
      */
     public void saveTasks(List<Task> tasks) throws SejongException {
+        assert tasks != null : "Task list should not be null";
         try {
             // Create directory if it doesn't exist
             Path path = Paths.get(filePath);
@@ -81,12 +88,12 @@ public class Storage {
                 Files.createDirectories(parentDir);
             }
 
-            // Write tasks to file
-            FileWriter writer = new FileWriter(filePath);
-            for (Task task : tasks) {
-                writer.write(task.toFileFormat() + System.lineSeparator());
+            // Write tasks to file using try-with-resources for proper resource management
+            try (FileWriter writer = new FileWriter(filePath)) {
+                for (Task task : tasks) {
+                    writer.write(task.toFileFormat() + System.lineSeparator());
+                }
             }
-            writer.close();
         } catch (IOException e) {
             throw new SejongException("Error saving tasks to file: " + e.getMessage());
         }
@@ -100,7 +107,9 @@ public class Storage {
      * @throws SejongException If the line format is invalid.
      */
     private Task parseTask(String line) throws SejongException {
-        String[] parts = line.split(" \\| ");
+        assert line != null : "Line should not be null";
+        assert !line.isEmpty() : "Line should not be empty";
+        String[] parts = line.split("\\s\\|\\s");
         if (parts.length < 3) {
             throw new SejongException("Invalid task format");
         }
@@ -108,6 +117,7 @@ public class Storage {
         String type = parts[0].trim();
         boolean isDone = parts[1].trim().equals("1");
         String description = parts[2].trim();
+        assert !description.isEmpty() : "Description should not be empty";
 
         switch (type) {
         case "T":

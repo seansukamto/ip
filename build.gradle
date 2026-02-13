@@ -50,6 +50,10 @@ application {
     mainClass.set("sejong.Launcher")
 }
 
+run {
+    enableAssertions = true
+}
+
 shadowJar {
     archiveBaseName = "sejong"
     archiveClassifier = null

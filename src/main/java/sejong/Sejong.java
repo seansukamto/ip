@@ -18,16 +18,7 @@ public class Sejong {
      * @param filePath Path to the storage file.
      */
     public Sejong(String filePath) {
-        ui = new Ui();
-        storage = new Storage(filePath);
-        TaskList loadedTasks;
-        try {
-            loadedTasks = new TaskList(storage.loadTasks());
-        } catch (SejongException e) {
-            ui.showLoadingError();
-            loadedTasks = new TaskList();
-        }
-        tasks = loadedTasks;
+        this(filePath, new Ui());
     }
 
     /**
@@ -37,16 +28,39 @@ public class Sejong {
      * @param responseBuffer Buffer to capture bot responses for display in the GUI.
      */
     public Sejong(String filePath, StringBuilder responseBuffer) {
-        ui = new Ui(responseBuffer);
-        storage = new Storage(filePath);
-        TaskList loadedTasks;
+        this(filePath, new Ui(responseBuffer));
+    }
+
+    /**
+     * Common constructor that handles initialization logic.
+     *
+     * @param filePath Path to the storage file.
+     * @param ui       The user interface instance to use.
+     */
+    private Sejong(String filePath, Ui ui) {
+        assert filePath != null : "File path should not be null";
+        assert ui != null : "UI should not be null";
+        
+        this.ui = ui;
+        this.storage = new Storage(filePath);
+        this.tasks = loadTasksOrDefault();
+        
+        assert this.storage != null : "Storage should be initialized";
+        assert this.tasks != null : "TaskList should be initialized";
+    }
+
+    /**
+     * Loads tasks from storage, or returns an empty task list if loading fails.
+     *
+     * @return TaskList loaded from storage, or empty TaskList if loading fails.
+     */
+    private TaskList loadTasksOrDefault() {
         try {
-            loadedTasks = new TaskList(storage.loadTasks());
+            return new TaskList(storage.loadTasks());
         } catch (SejongException e) {
             ui.showLoadingError();
-            loadedTasks = new TaskList();
+            return new TaskList();
         }
-        tasks = loadedTasks;
     }
 
     /**
@@ -58,7 +72,9 @@ public class Sejong {
         while (!isExit && ui.hasNextLine()) {
             try {
                 String fullCommand = ui.readCommand();
+                assert fullCommand != null : "Command should not be null";
                 Command c = Parser.parse(fullCommand);
+                assert c != null : "Parsed command should not be null";
                 c.execute(tasks, ui, storage);
                 isExit = c.isExit();
             } catch (SejongException e) {
@@ -83,6 +99,7 @@ public class Sejong {
         }
         try {
             Command c = Parser.parse(input.trim());
+            assert c != null : "Parsed command should not be null";
             c.execute(tasks, ui, storage);
             return ui.getAndClearResponse();
         } catch (SejongException e) {
