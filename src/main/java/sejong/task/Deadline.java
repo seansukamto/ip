@@ -1,10 +1,9 @@
 package sejong.task;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 import sejong.SejongException;
+import sejong.util.DateUtil;
 
 /**
  * Represents a task with a deadline.
@@ -21,7 +20,7 @@ public class Deadline extends Task {
      */
     public Deadline(String description, String by) throws SejongException {
         super(description);
-        this.by = parseDate(by);
+        this.by = DateUtil.parseDate(by);
     }
 
     /**
@@ -34,7 +33,7 @@ public class Deadline extends Task {
      */
     public Deadline(String description, String by, boolean isDone) throws SejongException {
         super(description, isDone);
-        this.by = parseDate(by);
+        this.by = DateUtil.parseDate(by);
     }
 
     /**
@@ -47,21 +46,6 @@ public class Deadline extends Task {
     public Deadline(String description, LocalDate by, boolean isDone) {
         super(description, isDone);
         this.by = by;
-    }
-
-    /**
-     * Parses a date string in yyyy-MM-dd format.
-     *
-     * @param dateStr Date string.
-     * @return Parsed LocalDate.
-     * @throws SejongException If format is invalid.
-     */
-    private LocalDate parseDate(String dateStr) throws SejongException {
-        try {
-            return LocalDate.parse(dateStr);
-        } catch (DateTimeParseException e) {
-            throw new SejongException("Invalid date format! Please use yyyy-MM-dd format (e.g., 2019-12-02)");
-        }
     }
 
     /**
@@ -85,7 +69,7 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        String formattedDate = by.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));
+        String formattedDate = DateUtil.formatForDisplay(by);
         return getTaskIcon() + getStatusIcon() + " " + getDescription() + " (by: " + formattedDate + ")";
     }
 }

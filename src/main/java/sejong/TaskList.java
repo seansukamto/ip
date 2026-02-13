@@ -9,6 +9,8 @@ import sejong.task.Deadline;
 import sejong.task.Event;
 import sejong.task.Task;
 
+import static sejong.Messages.ERROR_INVALID_TASK_NUMBER;
+
 /**
  * Contains the task list and operations to manipulate it.
  */
@@ -28,6 +30,7 @@ public class TaskList {
      * @param tasks List of tasks to initialize with.
      */
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "Task list should not be null";
         this.tasks = new ArrayList<>(tasks);
     }
 
@@ -46,6 +49,7 @@ public class TaskList {
      * @param task Task to add.
      */
     public void addTask(Task task) {
+        assert task != null : "Task to add should not be null";
         tasks.add(task);
     }
 
@@ -58,9 +62,11 @@ public class TaskList {
      */
     public Task deleteTask(int index) throws SejongException {
         if (index < 0 || index >= tasks.size()) {
-            throw new SejongException("OOPS!!! Please provide a valid task number.");
+            throw new SejongException(ERROR_INVALID_TASK_NUMBER);
         }
-        return tasks.remove(index);
+        Task deletedTask = tasks.remove(index);
+        assert deletedTask != null : "Deleted task should not be null";
+        return deletedTask;
     }
 
     /**
@@ -72,9 +78,11 @@ public class TaskList {
      */
     public Task getTask(int index) throws SejongException {
         if (index < 0 || index >= tasks.size()) {
-            throw new SejongException("OOPS!!! Please provide a valid task number.");
+            throw new SejongException(ERROR_INVALID_TASK_NUMBER);
         }
-        return tasks.get(index);
+        Task task = tasks.get(index);
+        assert task != null : "Retrieved task should not be null";
+        return task;
     }
 
     /**
@@ -87,6 +95,7 @@ public class TaskList {
     public Task markTask(int index) throws SejongException {
         Task task = getTask(index);
         task.markDone();
+        assert task.isDone() : "Task should be marked as done";
         return task;
     }
 
@@ -100,6 +109,7 @@ public class TaskList {
     public Task unmarkTask(int index) throws SejongException {
         Task task = getTask(index);
         task.markNotDone();
+        assert !task.isDone() : "Task should be marked as not done";
         return task;
     }
 
@@ -110,6 +120,7 @@ public class TaskList {
      * @return List of tasks on that date.
      */
     public List<Task> findTasksOnDate(LocalDate date) {
+        assert date != null : "Date should not be null";
         List<Task> matchingTasks = new ArrayList<>();
         for (Task task : tasks) {
             if (task instanceof Deadline) {
@@ -134,6 +145,8 @@ public class TaskList {
      * @return List of tasks containing the keyword.
      */
     public List<Task> findTasksByKeyword(String keyword) {
+        assert keyword != null : "Keyword should not be null";
+        assert !keyword.isEmpty() : "Keyword should not be empty";
         List<Task> matchingTasks = new ArrayList<>();
         String lowerKeyword = keyword.toLowerCase();
         for (Task task : tasks) {

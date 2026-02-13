@@ -1,10 +1,9 @@
 package sejong.task;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 import sejong.SejongException;
+import sejong.util.DateUtil;
 
 /**
  * Represents a task that occurs during a specific time period.
@@ -19,12 +18,13 @@ public class Event extends Task {
      * @param description Task description.
      * @param from        Start date in yyyy-MM-dd format.
      * @param to          End date in yyyy-MM-dd format.
-     * @throws SejongException If date format is invalid.
+     * @throws SejongException If date format is invalid or date range is invalid.
      */
     public Event(String description, String from, String to) throws SejongException {
         super(description);
-        this.from = parseDate(from);
-        this.to = parseDate(to);
+        this.from = DateUtil.parseDate(from);
+        this.to = DateUtil.parseDate(to);
+        DateUtil.validateDateRange(this.from, this.to);
     }
 
     /**
@@ -34,12 +34,13 @@ public class Event extends Task {
      * @param from        Start date in yyyy-MM-dd format.
      * @param to          End date in yyyy-MM-dd format.
      * @param isDone      Completion status.
-     * @throws SejongException If date format is invalid.
+     * @throws SejongException If date format is invalid or date range is invalid.
      */
     public Event(String description, String from, String to, boolean isDone) throws SejongException {
         super(description, isDone);
-        this.from = parseDate(from);
-        this.to = parseDate(to);
+        this.from = DateUtil.parseDate(from);
+        this.to = DateUtil.parseDate(to);
+        DateUtil.validateDateRange(this.from, this.to);
     }
 
     /**
@@ -49,26 +50,13 @@ public class Event extends Task {
      * @param from        Start date.
      * @param to          End date.
      * @param isDone      Completion status.
+     * @throws SejongException If date range is invalid.
      */
-    public Event(String description, LocalDate from, LocalDate to, boolean isDone) {
+    public Event(String description, LocalDate from, LocalDate to, boolean isDone) throws SejongException {
         super(description, isDone);
         this.from = from;
         this.to = to;
-    }
-
-    /**
-     * Parses a date string in yyyy-MM-dd format.
-     *
-     * @param dateStr Date string.
-     * @return Parsed LocalDate.
-     * @throws SejongException If format is invalid.
-     */
-    private LocalDate parseDate(String dateStr) throws SejongException {
-        try {
-            return LocalDate.parse(dateStr);
-        } catch (DateTimeParseException e) {
-            throw new SejongException("Invalid date format! Please use yyyy-MM-dd format (e.g., 2019-12-02)");
-        }
+        DateUtil.validateDateRange(from, to);
     }
 
     /**
@@ -101,8 +89,8 @@ public class Event extends Task {
 
     @Override
     public String toString() {
-        String formattedFrom = from.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));
-        String formattedTo = to.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));
+        String formattedFrom = DateUtil.formatForDisplay(from);
+        String formattedTo = DateUtil.formatForDisplay(to);
         return getTaskIcon() + getStatusIcon() + " " + getDescription()
                 + " (from: " + formattedFrom + " to: " + formattedTo + ")";
     }

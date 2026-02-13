@@ -11,11 +11,22 @@ import sejong.command.MarkCommand;
 import sejong.command.TodoCommand;
 import sejong.command.UnmarkCommand;
 
+import static sejong.Messages.*;
+
 
 /**
  * Parses user input into commands and arguments.
  */
 public class Parser {
+    /** Command prefixes and their lengths. */
+    private static final String CMD_TODO = "todo";
+    private static final int CMD_TODO_LENGTH = 4;
+    private static final String CMD_DEADLINE = "deadline";
+    private static final int CMD_DEADLINE_LENGTH = 8;
+    private static final String CMD_EVENT = "event";
+    private static final int CMD_EVENT_LENGTH = 5;
+    private static final String CMD_FIND = "find";
+    private static final int CMD_FIND_LENGTH = 4;
 
     /**
      * Parses user input into a Command object.
@@ -25,6 +36,7 @@ public class Parser {
      * @throws SejongException If the command is invalid.
      */
     public static Command parse(String fullCommand) throws SejongException {
+        assert fullCommand != null : "Command should not be null";
         if ("bye".equals(fullCommand)) {
             return new ByeCommand();
         }
@@ -68,7 +80,7 @@ public class Parser {
             return new FindCommand(keyword);
         }
 
-        throw new SejongException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+        throw new SejongException(ERROR_UNKNOWN_COMMAND);
     }
 
     /**
@@ -79,14 +91,17 @@ public class Parser {
      * @throws SejongException If the index cannot be parsed or is invalid format.
      */
     public static int parseTaskIndex(String input) throws SejongException {
+        assert input != null : "Input should not be null";
         String[] parts = input.trim().split("\\s+");
         if (parts.length != 2) {
-            throw new SejongException("OOPS!!! Please provide a valid task number.");
+            throw new SejongException(ERROR_INVALID_TASK_NUMBER);
         }
         try {
-            return Integer.parseInt(parts[1]) - 1; // Convert to 0-based
+            int index = Integer.parseInt(parts[1]) - 1; // Convert to 0-based
+            assert index >= -1 : "Parsed index should be at least -1 (for user input 0)";
+            return index;
         } catch (NumberFormatException e) {
-            throw new SejongException("OOPS!!! Please provide a valid task number.");
+            throw new SejongException(ERROR_INVALID_TASK_NUMBER);
         }
     }
 
@@ -98,13 +113,15 @@ public class Parser {
      * @throws SejongException If the description is empty.
      */
     public static String parseTodoCommand(String input) throws SejongException {
-        if (input.trim().equals("todo")) {
-            throw new SejongException("OOPS!!! The description of a todo cannot be empty.");
+        assert input != null : "Input should not be null";
+        if (input.trim().equals(CMD_TODO)) {
+            throw new SejongException(ERROR_EMPTY_TODO_DESCRIPTION);
         }
-        String description = input.substring(4).trim();
+        String description = input.substring(CMD_TODO_LENGTH).trim();
         if (description.isEmpty()) {
-            throw new SejongException("OOPS!!! The description of a todo cannot be empty.");
+            throw new SejongException(ERROR_EMPTY_TODO_DESCRIPTION);
         }
+        assert !description.isEmpty() : "Description should not be empty at this point";
         return description;
     }
 
@@ -116,26 +133,31 @@ public class Parser {
      * @throws SejongException If the command format is invalid.
      */
     public static String[] parseDeadlineCommand(String input) throws SejongException {
-        if (input.trim().equals("deadline")) {
-            throw new SejongException("OOPS!!! The description of a deadline cannot be empty.");
+        assert input != null : "Input should not be null";
+        if (input.trim().equals(CMD_DEADLINE)) {
+            throw new SejongException(ERROR_EMPTY_DEADLINE_DESCRIPTION);
         }
-        String remainder = input.substring(8).trim();
+        String remainder = input.substring(CMD_DEADLINE_LENGTH).trim();
         int byIndex = remainder.indexOf("/by");
         if (byIndex == -1) {
-            throw new SejongException("OOPS!!! Please specify when the deadline is using /by.");
+            throw new SejongException(ERROR_MISSING_DEADLINE_BY);
         }
         if (byIndex == 0) {
-            throw new SejongException("OOPS!!! The description of a deadline cannot be empty.");
+            throw new SejongException(ERROR_EMPTY_DEADLINE_DESCRIPTION);
         }
         String description = remainder.substring(0, byIndex).trim();
         String by = remainder.substring(byIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new SejongException("OOPS!!! The description of a deadline cannot be empty.");
+            throw new SejongException(ERROR_EMPTY_DEADLINE_DESCRIPTION);
         }
         if (by.isEmpty()) {
-            throw new SejongException("OOPS!!! The deadline time cannot be empty.");
+            throw new SejongException(ERROR_EMPTY_DEADLINE_TIME);
         }
-        return new String[]{description, by};
+        String[] result = new String[]{description, by};
+        assert result.length == 2 : "Result should have exactly 2 elements";
+        assert !result[0].isEmpty() : "Description should not be empty";
+        assert !result[1].isEmpty() : "By date should not be empty";
+        return result;
     }
 
     /**
@@ -146,34 +168,40 @@ public class Parser {
      * @throws SejongException If the command format is invalid.
      */
     public static String[] parseEventCommand(String input) throws SejongException {
-        if (input.trim().equals("event")) {
-            throw new SejongException("OOPS!!! The description of an event cannot be empty.");
+        assert input != null : "Input should not be null";
+        if (input.trim().equals(CMD_EVENT)) {
+            throw new SejongException(ERROR_EMPTY_EVENT_DESCRIPTION);
         }
-        String remainder = input.substring(5).trim();
+        String remainder = input.substring(CMD_EVENT_LENGTH).trim();
         int fromIndex = remainder.indexOf("/from");
         int toIndex = remainder.indexOf("/to");
         if (fromIndex == -1 || toIndex == -1) {
-            throw new SejongException("OOPS!!! Please specify the event time using /from and /to.");
+            throw new SejongException(ERROR_MISSING_EVENT_TIME);
         }
         if (fromIndex == 0) {
-            throw new SejongException("OOPS!!! The description of an event cannot be empty.");
+            throw new SejongException(ERROR_EMPTY_EVENT_DESCRIPTION);
         }
         if (toIndex <= fromIndex) {
-            throw new SejongException("OOPS!!! Please use /from before /to.");
+            throw new SejongException(ERROR_WRONG_EVENT_ORDER);
         }
         String description = remainder.substring(0, fromIndex).trim();
         String from = remainder.substring(fromIndex + 5, toIndex).trim();
         String to = remainder.substring(toIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new SejongException("OOPS!!! The description of an event cannot be empty.");
+            throw new SejongException(ERROR_EMPTY_EVENT_DESCRIPTION);
         }
         if (from.isEmpty()) {
-            throw new SejongException("OOPS!!! The event start time cannot be empty.");
+            throw new SejongException(ERROR_EMPTY_EVENT_START);
         }
         if (to.isEmpty()) {
-            throw new SejongException("OOPS!!! The event end time cannot be empty.");
+            throw new SejongException(ERROR_EMPTY_EVENT_END);
         }
-        return new String[]{description, from, to};
+        String[] result = new String[]{description, from, to};
+        assert result.length == 3 : "Result should have exactly 3 elements";
+        assert !result[0].isEmpty() : "Description should not be empty";
+        assert !result[1].isEmpty() : "From date should not be empty";
+        assert !result[2].isEmpty() : "To date should not be empty";
+        return result;
     }
 
     /**
@@ -184,13 +212,15 @@ public class Parser {
      * @throws SejongException If the keyword is empty.
      */
     public static String parseFindCommand(String input) throws SejongException {
-        if (input.trim().equals("find")) {
-            throw new SejongException("OOPS!!! Please provide a keyword to search for.");
+        assert input != null : "Input should not be null";
+        if (input.trim().equals(CMD_FIND)) {
+            throw new SejongException(ERROR_EMPTY_FIND_KEYWORD);
         }
-        String keyword = input.substring(4).trim();
+        String keyword = input.substring(CMD_FIND_LENGTH).trim();
         if (keyword.isEmpty()) {
-            throw new SejongException("OOPS!!! Please provide a keyword to search for.");
+            throw new SejongException(ERROR_EMPTY_FIND_KEYWORD);
         }
+        assert !keyword.isEmpty() : "Keyword should not be empty at this point";
         return keyword;
     }
 }
