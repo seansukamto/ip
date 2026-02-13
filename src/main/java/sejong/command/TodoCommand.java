@@ -7,6 +7,8 @@ import sejong.task.Task;
 import sejong.TaskList;
 import sejong.task.Todo;
 
+import static sejong.Messages.ERROR_DUPLICATE_TASK;
+
 /**
  * Command to add a todo task.
  */
@@ -25,6 +27,9 @@ public class TodoCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SejongException {
         Task task = new Todo(description);
+        if (tasks.hasDuplicate(task)) {
+            throw new SejongException(ERROR_DUPLICATE_TASK);
+        }
         tasks.addTask(task);
         storage.saveTasks(tasks.getTasks());
         ui.showTaskAdded(task, tasks.size());

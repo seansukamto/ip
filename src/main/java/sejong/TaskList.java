@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static sejong.Messages.ERROR_INVALID_TASK_NUMBER;
 import sejong.task.Deadline;
 import sejong.task.Event;
 import sejong.task.Task;
-
-import static sejong.Messages.ERROR_INVALID_TASK_NUMBER;
 
 /**
  * Contains the task list and operations to manipulate it.
@@ -49,6 +48,49 @@ public class TaskList {
      */
     public void addTask(Task task) {
         tasks.add(task);
+    }
+
+    /**
+     * Checks if an equivalent task already exists in the list.
+     * Duplicates are identified by: same type, matching description (case-insensitive),
+     * and for Deadline/Event, matching date(s).
+     *
+     * @param task Task to check for duplicates.
+     * @return True if a duplicate exists, false otherwise.
+     */
+    public boolean hasDuplicate(Task task) {
+        for (Task existing : tasks) {
+            if (isDuplicate(task, existing)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Compares two tasks for logical equivalence (duplicate check).
+     */
+    private boolean isDuplicate(Task newTask, Task existing) {
+        if (newTask.getClass() != existing.getClass()) {
+            return false;
+        }
+        if (!descriptionsMatch(newTask.getDescription(), existing.getDescription())) {
+            return false;
+        }
+        if (newTask instanceof Deadline) {
+            return ((Deadline) newTask).getBy().equals(((Deadline) existing).getBy());
+        }
+        if (newTask instanceof Event) {
+            Event ne = (Event) newTask;
+            Event oe = (Event) existing;
+            return ne.getFrom().equals(oe.getFrom()) && ne.getTo().equals(oe.getTo());
+        }
+        return true; // Todo: same type and description
+    }
+
+    private static boolean descriptionsMatch(String a, String b) {
+        return a != null && b != null
+                && a.trim().equalsIgnoreCase(b.trim());
     }
 
     /**

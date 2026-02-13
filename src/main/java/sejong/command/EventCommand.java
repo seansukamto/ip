@@ -7,6 +7,8 @@ import sejong.task.Event;
 import sejong.task.Task;
 import sejong.TaskList;
 
+import static sejong.Messages.ERROR_DUPLICATE_TASK;
+
 /**
  * Command to add an event task.
  */
@@ -31,6 +33,9 @@ public class EventCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SejongException {
         Task task = new Event(description, from, to);
+        if (tasks.hasDuplicate(task)) {
+            throw new SejongException(ERROR_DUPLICATE_TASK);
+        }
         tasks.addTask(task);
         storage.saveTasks(tasks.getTasks());
         ui.showTaskAdded(task, tasks.size());

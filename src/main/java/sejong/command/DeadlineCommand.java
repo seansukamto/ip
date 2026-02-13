@@ -7,6 +7,8 @@ import sejong.task.Deadline;
 import sejong.task.Task;
 import sejong.TaskList;
 
+import static sejong.Messages.ERROR_DUPLICATE_TASK;
+
 /**
  * Command to add a deadline task.
  */
@@ -28,6 +30,9 @@ public class DeadlineCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SejongException {
         Task task = new Deadline(description, by);
+        if (tasks.hasDuplicate(task)) {
+            throw new SejongException(ERROR_DUPLICATE_TASK);
+        }
         tasks.addTask(task);
         storage.saveTasks(tasks.getTasks());
         ui.showTaskAdded(task, tasks.size());

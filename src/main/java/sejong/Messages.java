@@ -42,6 +42,10 @@ public class Messages {
     public static final String ERROR_EMPTY_FIND_KEYWORD = 
             ERROR_PREFIX + "Please provide a keyword to search for.";
 
+    // Duplicate task
+    public static final String ERROR_DUPLICATE_TASK = 
+            ERROR_PREFIX + "This task already exists in the list.";
+
     /**
      * Private constructor to prevent instantiation of utility class.
      */
