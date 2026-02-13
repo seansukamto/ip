@@ -6,6 +6,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
+import static sejong.Constants.CMD_BYE;
+
 /**
  * Controller for the main chat window.
  * Handles user input and displays user and bot dialog boxes.
@@ -67,7 +69,7 @@ public class MainWindow {
                 DialogBox.getSejongDialog(sejong.getResponse(input))
         );
 
-        if (input.equalsIgnoreCase("bye")) {
+        if (input.equalsIgnoreCase(CMD_BYE)) {
             javafx.application.Platform.exit();
         }
     }

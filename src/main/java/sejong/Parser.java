@@ -11,22 +11,18 @@ import sejong.command.MarkCommand;
 import sejong.command.TodoCommand;
 import sejong.command.UnmarkCommand;
 
+import static sejong.Constants.*;
 import static sejong.Messages.*;
-
 
 /**
  * Parses user input into commands and arguments.
  */
 public class Parser {
-    /** Command prefixes and their lengths. */
-    private static final String CMD_TODO = "todo";
-    private static final int CMD_TODO_LENGTH = 4;
-    private static final String CMD_DEADLINE = "deadline";
-    private static final int CMD_DEADLINE_LENGTH = 8;
-    private static final String CMD_EVENT = "event";
-    private static final int CMD_EVENT_LENGTH = 5;
-    private static final String CMD_FIND = "find";
-    private static final int CMD_FIND_LENGTH = 4;
+    /** Command prefix lengths for parsing. */
+    private static final int CMD_TODO_LENGTH = CMD_TODO.length();
+    private static final int CMD_DEADLINE_LENGTH = CMD_DEADLINE.length();
+    private static final int CMD_EVENT_LENGTH = CMD_EVENT.length();
+    private static final int CMD_FIND_LENGTH = CMD_FIND.length();
 
     /**
      * Parses user input into a Command object.
@@ -37,45 +33,45 @@ public class Parser {
      */
     public static Command parse(String fullCommand) throws SejongException {
         assert fullCommand != null : "Command should not be null";
-        if ("bye".equals(fullCommand)) {
+        if (CMD_BYE.equals(fullCommand)) {
             return new ByeCommand();
         }
 
-        if ("list".equals(fullCommand)) {
+        if (CMD_LIST.equals(fullCommand)) {
             return new ListCommand();
         }
 
-        if (fullCommand.startsWith("mark ")) {
+        if (fullCommand.startsWith(CMD_MARK + " ")) {
             int index = parseTaskIndex(fullCommand);
             return new MarkCommand(index);
         }
 
-        if (fullCommand.startsWith("unmark ")) {
+        if (fullCommand.startsWith(CMD_UNMARK + " ")) {
             int index = parseTaskIndex(fullCommand);
             return new UnmarkCommand(index);
         }
 
-        if (fullCommand.startsWith("delete ")) {
+        if (fullCommand.startsWith(CMD_DELETE + " ")) {
             int index = parseTaskIndex(fullCommand);
             return new DeleteCommand(index);
         }
 
-        if (fullCommand.startsWith("todo")) {
+        if (fullCommand.startsWith(CMD_TODO)) {
             String description = parseTodoCommand(fullCommand);
             return new TodoCommand(description);
         }
 
-        if (fullCommand.startsWith("deadline")) {
+        if (fullCommand.startsWith(CMD_DEADLINE)) {
             String[] parts = parseDeadlineCommand(fullCommand);
             return new DeadlineCommand(parts[0], parts[1]);
         }
 
-        if (fullCommand.startsWith("event")) {
+        if (fullCommand.startsWith(CMD_EVENT)) {
             String[] parts = parseEventCommand(fullCommand);
             return new EventCommand(parts[0], parts[1], parts[2]);
         }
 
-        if (fullCommand.startsWith("find")) {
+        if (fullCommand.startsWith(CMD_FIND)) {
             String keyword = parseFindCommand(fullCommand);
             return new FindCommand(keyword);
         }

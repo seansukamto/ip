@@ -8,18 +8,18 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import static sejong.Constants.DEFAULT_FILE_PATH;
+
 /**
  * Main application window for the Sejong chatbot GUI.
  * Loads the main layout from FXML and wires the controller to the Sejong instance.
  */
 public class Main extends Application {
-    private static final String FILE_PATH = "./data/sejong.txt";
-
     @Override
     public void start(Stage stage) {
         try {
             StringBuilder responseBuffer = new StringBuilder();
-            Sejong sejong = new Sejong(FILE_PATH, responseBuffer);
+            Sejong sejong = new Sejong(DEFAULT_FILE_PATH, responseBuffer);
 
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = loader.load();
