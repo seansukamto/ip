@@ -2,12 +2,13 @@ package sejong;
 
 import sejong.command.Command;
 
+import static sejong.Constants.DEFAULT_FILE_PATH;
+
 /**
  * Entry point for the Sejong chatbot.
  * Supports both CLI (run) and GUI (getResponse) usage.
  */
 public class Sejong {
-    private static final String FILE_PATH = "./data/sejong.txt";
     private final Storage storage;
     private final TaskList tasks;
     private final Ui ui;
@@ -112,6 +113,6 @@ public class Sejong {
      * Main entry point for CLI. For GUI, use Launcher instead.
      */
     public static void main(String... args) {
-        new Sejong(FILE_PATH).run();
+        new Sejong(DEFAULT_FILE_PATH).run();
     }
 }
