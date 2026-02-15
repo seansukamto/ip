@@ -30,8 +30,8 @@ public class Main extends Application {
             scene.getStylesheets().add(Main.class.getResource("/view/application.css").toExternalForm());
             stage.setScene(scene);
             stage.setTitle("Sejong");
-            stage.setMinWidth(400);
-            stage.setMinHeight(400);
+            stage.setMinWidth(360);
+            stage.setMinHeight(450);
             stage.show();
             stage.toFront();
             stage.requestFocus();

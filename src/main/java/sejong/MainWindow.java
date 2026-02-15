@@ -36,6 +36,7 @@ public class MainWindow {
      */
     @FXML
     public void initialize() {
+        scrollPane.setVvalue(0.0);
         dialogContainer.heightProperty().addListener((observable) -> scrollPane.setVvalue(1.0));
         userInput.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
