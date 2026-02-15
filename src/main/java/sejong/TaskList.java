@@ -193,6 +193,129 @@ public class TaskList {
     }
 
     /**
+     * Finds all tasks matching the specified search criteria.
+     * Supports filtering by keywords (all must match), date, task type, and completion status.
+     *
+     * Note: This method and its helper methods were added with AI-Assisted code development using Cursor.
+     *
+     * @param criteria Search criteria to apply.
+     * @return List of tasks matching all specified criteria.
+     */
+    public List<Task> findTasks(SearchCriteria criteria) {
+        List<Task> matchingTasks = new ArrayList<>();
+        
+        for (Task task : tasks) {
+            if (matchesCriteria(task, criteria)) {
+                matchingTasks.add(task);
+            }
+        }
+        
+        return matchingTasks;
+    }
+
+    /**
+     * Checks if a task matches the given search criteria.
+     *
+     * @param task     Task to check.
+     * @param criteria Search criteria to match against.
+     * @return True if task matches all criteria, false otherwise.
+     */
+    private boolean matchesCriteria(Task task, SearchCriteria criteria) {
+        // Check keywords (all must match)
+        if (criteria.hasKeywords()) {
+            String description = task.getDescription().toLowerCase();
+            for (String keyword : criteria.getKeywords()) {
+                if (!description.contains(keyword.toLowerCase())) {
+                    return false;
+                }
+            }
+        }
+        
+        // Check date filter
+        if (criteria.hasDateFilter()) {
+            if (!matchesDate(task, criteria.getDate())) {
+                return false;
+            }
+        }
+        
+        // Check task type filter
+        if (criteria.hasTypeFilter()) {
+            if (!matchesType(task, criteria.getTaskType())) {
+                return false;
+            }
+        }
+        
+        // Check completion status filter
+        if (criteria.hasStatusFilter()) {
+            if (!matchesStatus(task, criteria.getStatus())) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Checks if a task matches the specified date.
+     *
+     * @param task Task to check.
+     * @param date Date to match.
+     * @return True if task is on the specified date, false otherwise.
+     */
+    private boolean matchesDate(Task task, LocalDate date) {
+        if (task instanceof Deadline) {
+            Deadline deadline = (Deadline) task;
+            return deadline.getBy().equals(date);
+        } else if (task instanceof Event) {
+            Event event = (Event) task;
+            return !date.isBefore(event.getFrom()) && !date.isAfter(event.getTo());
+        }
+        return false; // Todo tasks have no date
+    }
+
+    /**
+     * Checks if a task matches the specified type.
+     *
+     * @param task Task to check.
+     * @param type Type to match.
+     * @return True if task is of the specified type, false otherwise.
+     */
+    private boolean matchesType(Task task, SearchCriteria.TaskType type) {
+        switch (type) {
+        case TODO:
+            return task.getClass().getSimpleName().equals("Todo");
+        case DEADLINE:
+            return task instanceof Deadline;
+        case EVENT:
+            return task instanceof Event;
+        case ALL:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Checks if a task matches the specified completion status.
+     *
+     * @param task   Task to check.
+     * @param status Status to match.
+     * @return True if task has the specified status, false otherwise.
+     */
+    private boolean matchesStatus(Task task, SearchCriteria.CompletionStatus status) {
+        switch (status) {
+        case DONE:
+            return task.isDone();
+        case PENDING:
+            return !task.isDone();
+        case ALL:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    /**
      * Returns the number of tasks in the list.
      *
      * @return Number of tasks.

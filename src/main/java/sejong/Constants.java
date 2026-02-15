@@ -18,6 +18,11 @@ public class Constants {
     public static final String CMD_DEADLINE = "deadline";
     public static final String CMD_EVENT = "event";
     public static final String CMD_FIND = "find";
+    
+    /** Find command filter prefixes. */
+    public static final String FILTER_DATE = "/date";
+    public static final String FILTER_TYPE = "/type";
+    public static final String FILTER_STATUS = "/status";
 
     /**
      * Private constructor to prevent instantiation of utility class.

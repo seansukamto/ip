@@ -10,6 +10,11 @@ import sejong.command.ListCommand;
 import sejong.command.MarkCommand;
 import sejong.command.TodoCommand;
 import sejong.command.UnmarkCommand;
+import sejong.util.DateUtil;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static sejong.Constants.*;
 import static sejong.Messages.*;
@@ -72,8 +77,8 @@ public class Parser {
         }
 
         if (fullCommand.startsWith(CMD_FIND)) {
-            String keyword = parseFindCommand(fullCommand);
-            return new FindCommand(keyword);
+            SearchCriteria criteria = parseFindCommand(fullCommand);
+            return new FindCommand(criteria);
         }
 
         throw new SejongException(ERROR_UNKNOWN_COMMAND);
@@ -201,22 +206,109 @@ public class Parser {
     }
 
     /**
-     * Parses a find command.
+     * Parses a find command with support for multiple keywords and filters.
+     * Format: find <keywords> [/date DATE] [/type TYPE] [/status STATUS]
+     *
+     * Note: This method was enhanced with AI-Assisted code development using Cursor.
      *
      * @param input User input.
-     * @return The keyword to search for.
-     * @throws SejongException If the keyword is empty.
+     * @return SearchCriteria object with parsed filters.
+     * @throws SejongException If the command syntax is invalid.
      */
-    public static String parseFindCommand(String input) throws SejongException {
+    public static SearchCriteria parseFindCommand(String input) throws SejongException {
         assert input != null : "Input should not be null";
+        
         if (input.trim().equals(CMD_FIND)) {
             throw new SejongException(ERROR_EMPTY_FIND_KEYWORD);
         }
-        String keyword = input.substring(CMD_FIND_LENGTH).trim();
-        if (keyword.isEmpty()) {
+        
+        String remainder = input.substring(CMD_FIND_LENGTH).trim();
+        
+        // Initialize filter variables
+        List<String> keywords = new ArrayList<>();
+        LocalDate date = null;
+        SearchCriteria.TaskType taskType = SearchCriteria.TaskType.ALL;
+        SearchCriteria.CompletionStatus status = SearchCriteria.CompletionStatus.ALL;
+        
+        // Split input into tokens
+        String[] tokens = remainder.split("\\s+");
+        
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i];
+            
+            if (token.equals(FILTER_DATE)) {
+                // Parse /date filter
+                if (i + 1 >= tokens.length) {
+                    throw new SejongException(ERROR_EMPTY_DATE_FILTER);
+                }
+                String dateStr = tokens[++i];
+                date = DateUtil.parseDate(dateStr);
+            } else if (token.equals(FILTER_TYPE)) {
+                // Parse /type filter
+                if (i + 1 >= tokens.length) {
+                    throw new SejongException(ERROR_EMPTY_TYPE_FILTER);
+                }
+                String typeStr = tokens[++i].toLowerCase();
+                taskType = parseTaskType(typeStr);
+            } else if (token.equals(FILTER_STATUS)) {
+                // Parse /status filter
+                if (i + 1 >= tokens.length) {
+                    throw new SejongException(ERROR_EMPTY_STATUS_FILTER);
+                }
+                String statusStr = tokens[++i].toLowerCase();
+                status = parseCompletionStatus(statusStr);
+            } else {
+                // Regular keyword
+                keywords.add(token);
+            }
+        }
+        
+        // Must have at least keywords or filters
+        if (keywords.isEmpty() && date == null 
+                && taskType == SearchCriteria.TaskType.ALL 
+                && status == SearchCriteria.CompletionStatus.ALL) {
             throw new SejongException(ERROR_EMPTY_FIND_KEYWORD);
         }
-        assert !keyword.isEmpty() : "Keyword should not be empty at this point";
-        return keyword;
+        
+        return new SearchCriteria(keywords, date, taskType, status);
+    }
+
+    /**
+     * Parses a task type string into a TaskType enum.
+     *
+     * @param typeStr Task type string.
+     * @return Corresponding TaskType enum value.
+     * @throws SejongException If the task type is invalid.
+     */
+    private static SearchCriteria.TaskType parseTaskType(String typeStr) throws SejongException {
+        switch (typeStr.toLowerCase()) {
+        case "todo":
+            return SearchCriteria.TaskType.TODO;
+        case "deadline":
+            return SearchCriteria.TaskType.DEADLINE;
+        case "event":
+            return SearchCriteria.TaskType.EVENT;
+        default:
+            throw new SejongException(ERROR_INVALID_TASK_TYPE);
+        }
+    }
+
+    /**
+     * Parses a completion status string into a CompletionStatus enum.
+     *
+     * @param statusStr Status string.
+     * @return Corresponding CompletionStatus enum value.
+     * @throws SejongException If the status is invalid.
+     */
+    private static SearchCriteria.CompletionStatus parseCompletionStatus(String statusStr) 
+            throws SejongException {
+        switch (statusStr.toLowerCase()) {
+        case "done":
+            return SearchCriteria.CompletionStatus.DONE;
+        case "pending":
+            return SearchCriteria.CompletionStatus.PENDING;
+        default:
+            throw new SejongException(ERROR_INVALID_STATUS);
+        }
     }
 }

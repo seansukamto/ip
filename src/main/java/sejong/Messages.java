@@ -41,6 +41,18 @@ public class Messages {
     // Find command errors
     public static final String ERROR_EMPTY_FIND_KEYWORD = 
             ERROR_PREFIX + "Please provide a keyword to search for.";
+    public static final String ERROR_INVALID_FIND_SYNTAX = 
+            ERROR_PREFIX + "Invalid find command syntax. Use: find <keywords> [/date DATE] [/type TYPE] [/status STATUS]";
+    public static final String ERROR_INVALID_TASK_TYPE = 
+            ERROR_PREFIX + "Invalid task type. Use: todo, deadline, or event.";
+    public static final String ERROR_INVALID_STATUS = 
+            ERROR_PREFIX + "Invalid status. Use: done or pending.";
+    public static final String ERROR_EMPTY_DATE_FILTER = 
+            ERROR_PREFIX + "Please specify a date after /date.";
+    public static final String ERROR_EMPTY_TYPE_FILTER = 
+            ERROR_PREFIX + "Please specify a type after /type.";
+    public static final String ERROR_EMPTY_STATUS_FILTER = 
+            ERROR_PREFIX + "Please specify a status after /status.";
 
     // Duplicate task
     public static final String ERROR_DUPLICATE_TASK = 

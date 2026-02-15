@@ -8,6 +8,11 @@ repositories {
     mavenCentral()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 dependencies {
     String javaFxVersion = '17.0.7'
 
@@ -52,6 +57,17 @@ application {
 
 run {
     enableAssertions = true
+}
+
+task runDebug(type: JavaExec) {
+    group = "application"
+    description = "Run the application with debug enabled"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "sejong.Launcher"
+    enableAssertions = true
+    jvmArgs = [
+        '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
+    ]
 }
 
 shadowJar {

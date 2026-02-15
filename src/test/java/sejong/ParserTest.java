@@ -169,8 +169,9 @@ public class ParserTest {
 
     @Test
     public void parseFindCommand_validInput_success() throws SejongException {
-        String result = Parser.parseFindCommand("find book");
-        assertEquals("book", result);
+        SearchCriteria result = Parser.parseFindCommand("find book");
+        assertEquals(1, result.getKeywords().size());
+        assertEquals("book", result.getKeywords().get(0));
     }
 
     @Test
@@ -191,8 +192,80 @@ public class ParserTest {
 
     @Test
     public void parseFindCommand_multipleWords_success() throws SejongException {
-        String result = Parser.parseFindCommand("find project meeting");
-        assertEquals("project meeting", result);
+        SearchCriteria result = Parser.parseFindCommand("find project meeting");
+        assertEquals(2, result.getKeywords().size());
+        assertEquals("project", result.getKeywords().get(0));
+        assertEquals("meeting", result.getKeywords().get(1));
+    }
+
+    @Test
+    public void parseFindCommand_withDateFilter_success() throws SejongException {
+        SearchCriteria result = Parser.parseFindCommand("find /date 2026-02-15");
+        assertEquals(LocalDate.of(2026, 2, 15), result.getDate());
+        assertTrue(result.hasDateFilter());
+    }
+
+    @Test
+    public void parseFindCommand_withTypeFilter_success() throws SejongException {
+        SearchCriteria result = Parser.parseFindCommand("find /type deadline");
+        assertEquals(SearchCriteria.TaskType.DEADLINE, result.getTaskType());
+        assertTrue(result.hasTypeFilter());
+    }
+
+    @Test
+    public void parseFindCommand_withStatusFilter_success() throws SejongException {
+        SearchCriteria result = Parser.parseFindCommand("find /status done");
+        assertEquals(SearchCriteria.CompletionStatus.DONE, result.getStatus());
+        assertTrue(result.hasStatusFilter());
+    }
+
+    @Test
+    public void parseFindCommand_withMultipleFilters_success() throws SejongException {
+        SearchCriteria result = Parser.parseFindCommand("find meeting /type event /status pending");
+        assertEquals(1, result.getKeywords().size());
+        assertEquals("meeting", result.getKeywords().get(0));
+        assertEquals(SearchCriteria.TaskType.EVENT, result.getTaskType());
+        assertEquals(SearchCriteria.CompletionStatus.PENDING, result.getStatus());
+    }
+
+    @Test
+    public void parseFindCommand_invalidTaskType_throwsException() {
+        SejongException exception = assertThrows(SejongException.class, () -> {
+            Parser.parseFindCommand("find /type invalid");
+        });
+        assertEquals("OOPS!!! Invalid task type. Use: todo, deadline, or event.", exception.getMessage());
+    }
+
+    @Test
+    public void parseFindCommand_invalidStatus_throwsException() {
+        SejongException exception = assertThrows(SejongException.class, () -> {
+            Parser.parseFindCommand("find /status invalid");
+        });
+        assertEquals("OOPS!!! Invalid status. Use: done or pending.", exception.getMessage());
+    }
+
+    @Test
+    public void parseFindCommand_missingDateValue_throwsException() {
+        SejongException exception = assertThrows(SejongException.class, () -> {
+            Parser.parseFindCommand("find /date");
+        });
+        assertEquals("OOPS!!! Please specify a date after /date.", exception.getMessage());
+    }
+
+    @Test
+    public void parseFindCommand_missingTypeValue_throwsException() {
+        SejongException exception = assertThrows(SejongException.class, () -> {
+            Parser.parseFindCommand("find /type");
+        });
+        assertEquals("OOPS!!! Please specify a type after /type.", exception.getMessage());
+    }
+
+    @Test
+    public void parseFindCommand_missingStatusValue_throwsException() {
+        SejongException exception = assertThrows(SejongException.class, () -> {
+            Parser.parseFindCommand("find /status");
+        });
+        assertEquals("OOPS!!! Please specify a status after /status.", exception.getMessage());
     }
 
     @Test
