@@ -9,6 +9,7 @@ import static sejong.Messages.ERROR_INVALID_TASK_NUMBER;
 import sejong.task.Deadline;
 import sejong.task.Event;
 import sejong.task.Task;
+import sejong.task.Todo;
 
 /**
  * Contains the task list and operations to manipulate it.
@@ -283,7 +284,7 @@ public class TaskList {
     private boolean matchesType(Task task, SearchCriteria.TaskType type) {
         switch (type) {
         case TODO:
-            return task.getClass().getSimpleName().equals("Todo");
+            return task instanceof Todo;
         case DEADLINE:
             return task instanceof Deadline;
         case EVENT:

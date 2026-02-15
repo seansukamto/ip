@@ -21,6 +21,8 @@ import java.util.List;
 public class Storage {
     /** Delimiter used in file format. */
     private static final String DELIMITER = " | ";
+    /** Placeholder for pipe characters inside task descriptions to avoid delimiter collision. */
+    private static final String PIPE_PLACEHOLDER = "<<<PIPE>>>";
     
     private final String filePath;
 
@@ -91,7 +93,7 @@ public class Storage {
             // Write tasks to file using try-with-resources for proper resource management
             try (FileWriter writer = new FileWriter(filePath)) {
                 for (Task task : tasks) {
-                    writer.write(task.toFileFormat() + System.lineSeparator());
+                    writer.write(taskToLine(task) + System.lineSeparator());
                 }
             }
         } catch (IOException e) {
@@ -116,7 +118,7 @@ public class Storage {
 
         String type = parts[0].trim();
         boolean isDone = parts[1].trim().equals("1");
-        String description = parts[2].trim();
+        String description = unescapePipes(parts[2].trim());
         assert !description.isEmpty() : "Description should not be empty";
 
         switch (type) {
@@ -127,19 +129,70 @@ public class Storage {
                 throw new SejongException("Invalid deadline format");
             }
             String byStr = parts[3].trim();
-            LocalDate by = LocalDate.parse(byStr);
-            return new Deadline(description, by, isDone);
+            try {
+                LocalDate by = LocalDate.parse(byStr);
+                return new Deadline(description, by, isDone);
+            } catch (Exception e) {
+                throw new SejongException("Invalid deadline date format in storage: " + byStr);
+            }
         case "E":
             if (parts.length < 5) {
                 throw new SejongException("Invalid event format");
             }
             String fromStr = parts[3].trim();
             String toStr = parts[4].trim();
-            LocalDate from = LocalDate.parse(fromStr);
-            LocalDate to = LocalDate.parse(toStr);
-            return new Event(description, from, to, isDone);
+            try {
+                LocalDate from = LocalDate.parse(fromStr);
+                LocalDate to = LocalDate.parse(toStr);
+                return new Event(description, from, to, isDone);
+            } catch (Exception e) {
+                throw new SejongException("Invalid event date format in storage");
+            }
         default:
             throw new SejongException("Unknown task type: " + type);
         }
+    }
+
+    /**
+     * Serializes a task to a storage line, escaping the description to prevent
+     * delimiter collision with pipe characters in the description text.
+     *
+     * @param task Task to serialize.
+     * @return Storage-formatted line with escaped description.
+     */
+    private String taskToLine(Task task) {
+        String desc = escapePipes(task.getDescription());
+        String status = task.isDone() ? "1" : "0";
+
+        if (task instanceof Deadline) {
+            Deadline d = (Deadline) task;
+            return "D" + DELIMITER + status + DELIMITER + desc + DELIMITER + d.getBy();
+        }
+        if (task instanceof Event) {
+            Event e = (Event) task;
+            return "E" + DELIMITER + status + DELIMITER + desc + DELIMITER + e.getFrom() + DELIMITER + e.getTo();
+        }
+        // Todo (or any future plain-text task)
+        return "T" + DELIMITER + status + DELIMITER + desc;
+    }
+
+    /**
+     * Escapes pipe characters in a string to prevent delimiter collision in storage.
+     *
+     * @param text Text to escape.
+     * @return Text with pipe characters replaced by the placeholder.
+     */
+    private static String escapePipes(String text) {
+        return text.replace("|", PIPE_PLACEHOLDER);
+    }
+
+    /**
+     * Unescapes pipe placeholders back to pipe characters after loading from storage.
+     *
+     * @param text Text with placeholders.
+     * @return Text with original pipe characters restored.
+     */
+    private static String unescapePipes(String text) {
+        return text.replace(PIPE_PLACEHOLDER, "|");
     }
 }

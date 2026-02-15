@@ -69,7 +69,7 @@ public class MainWindow {
                 DialogBox.getSejongDialog(sejong.getResponse(input))
         );
 
-        if (input.equalsIgnoreCase(CMD_BYE)) {
+        if (input.equals(CMD_BYE)) {
             javafx.application.Platform.exit();
         }
     }

@@ -209,9 +209,13 @@ public class Ui {
      */
     public void showTaskList(List<Task> tasks) {
         showLine();
-        out(" Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            out(" " + (i + 1) + "." + tasks.get(i));
+        if (tasks.isEmpty()) {
+            out(" Your task list is empty.");
+        } else {
+            out(" Here are the tasks in your list:");
+            for (int i = 0; i < tasks.size(); i++) {
+                out(" " + (i + 1) + "." + tasks.get(i));
+            }
         }
         showLine();
     }

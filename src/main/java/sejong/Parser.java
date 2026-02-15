@@ -61,22 +61,22 @@ public class Parser {
             return new DeleteCommand(index);
         }
 
-        if (fullCommand.startsWith(CMD_TODO)) {
+        if (fullCommand.equals(CMD_TODO) || fullCommand.startsWith(CMD_TODO + " ")) {
             String description = parseTodoCommand(fullCommand);
             return new TodoCommand(description);
         }
 
-        if (fullCommand.startsWith(CMD_DEADLINE)) {
+        if (fullCommand.equals(CMD_DEADLINE) || fullCommand.startsWith(CMD_DEADLINE + " ")) {
             String[] parts = parseDeadlineCommand(fullCommand);
             return new DeadlineCommand(parts[0], parts[1]);
         }
 
-        if (fullCommand.startsWith(CMD_EVENT)) {
+        if (fullCommand.equals(CMD_EVENT) || fullCommand.startsWith(CMD_EVENT + " ")) {
             String[] parts = parseEventCommand(fullCommand);
             return new EventCommand(parts[0], parts[1], parts[2]);
         }
 
-        if (fullCommand.startsWith(CMD_FIND)) {
+        if (fullCommand.equals(CMD_FIND) || fullCommand.startsWith(CMD_FIND + " ")) {
             SearchCriteria criteria = parseFindCommand(fullCommand);
             return new FindCommand(criteria);
         }
@@ -98,8 +98,13 @@ public class Parser {
             throw new SejongException(ERROR_INVALID_TASK_NUMBER);
         }
         try {
-            int index = Integer.parseInt(parts[1]) - 1; // Convert to 0-based
-            assert index >= -1 : "Parsed index should be at least -1 (for user input 0)";
+            int userIndex = Integer.parseInt(parts[1]);
+            // Validate user input is positive and won't overflow when converted to 0-based
+            if (userIndex <= 0 || userIndex == Integer.MAX_VALUE) {
+                throw new SejongException(ERROR_INVALID_TASK_NUMBER);
+            }
+            int index = userIndex - 1; // Convert to 0-based
+            assert index >= 0 : "Parsed index should be non-negative after validation";
             return index;
         } catch (NumberFormatException e) {
             throw new SejongException(ERROR_INVALID_TASK_NUMBER);
@@ -281,7 +286,7 @@ public class Parser {
      * @throws SejongException If the task type is invalid.
      */
     private static SearchCriteria.TaskType parseTaskType(String typeStr) throws SejongException {
-        switch (typeStr.toLowerCase()) {
+        switch (typeStr) {
         case "todo":
             return SearchCriteria.TaskType.TODO;
         case "deadline":
@@ -302,7 +307,7 @@ public class Parser {
      */
     private static SearchCriteria.CompletionStatus parseCompletionStatus(String statusStr) 
             throws SejongException {
-        switch (statusStr.toLowerCase()) {
+        switch (statusStr) {
         case "done":
             return SearchCriteria.CompletionStatus.DONE;
         case "pending":
